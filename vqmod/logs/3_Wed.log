@@ -1,0 +1,75 @@
+---------- Date: 2016-07-06 00:51:48 ~ IP : 127.0.0.1 ----------
+REQUEST URI : /admin/index.php?route=sale/vdi_order/info&token=13ab29zEEX7qqbE1VnNUJOym3huolz7c&order_id=3
+MOD DETAILS:
+   modFile   : C:\OpenServer\domains\indicart\vqmod/xml/paper_mod.xml
+   id        : This vqmod contributes to the following custom functionalities: table view, paper filter & addition of multiples to cart.
+   version   : 2.2.0.0
+   vqmver    : 2.3
+   author    : dk.pochtamp@gmail.com
+
+File Name    : /admin/view/template/sale/vdi_order_info.tpl(1)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <td class="text-right"><?php echo $product['price']; ?></td>
+
+----------------------------------------------------------------------
+
+
+---------- Date: 2016-07-06 00:57:06 ~ IP : 127.0.0.1 ----------
+REQUEST URI : /admin/index.php?route=sale/vdi_order/info&token=mrLIqVKaZuw1iqwUSCf9nDH7M4eHSdDD&order_id=3
+MOD DETAILS:
+   modFile   : C:\OpenServer\domains\indicart\vqmod/xml/paper_mod.xml
+   id        : This vqmod contributes to the following custom functionalities: table view, paper filter & addition of multiples to cart.
+   version   : 2.2.0.0
+   vqmver    : 2.3
+   author    : dk.pochtamp@gmail.com
+
+File Name    : /admin/view/template/sale/vdi_order_info.tpl(1)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <td class="text-right"><?php echo $product['price']; ?></td>
+
+----------------------------------------------------------------------
+
+
+---------- Date: 2016-07-06 00:57:42 ~ IP : 127.0.0.1 ----------
+REQUEST URI : /admin/index.php?route=sale/vdi_order/info&token=mrLIqVKaZuw1iqwUSCf9nDH7M4eHSdDD&order_id=3
+MOD DETAILS:
+   modFile   : C:\OpenServer\domains\indicart\vqmod/xml/paper_mod.xml
+   id        : This vqmod contributes to the following custom functionalities: table view, paper filter & addition of multiples to cart.
+   version   : 2.2.0.0
+   vqmver    : 2.3
+   author    : dk.pochtamp@gmail.com
+
+File Name    : /admin/view/template/sale/vdi_order_info.tpl(1)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <td class="text-right"><?php echo $product['price']; ?></td>
+
+----------------------------------------------------------------------
+
+
+---------- Date: 2016-07-06 00:57:53 ~ IP : 127.0.0.1 ----------
+REQUEST URI : /admin/index.php?route=sale/vdi_order/info&token=mrLIqVKaZuw1iqwUSCf9nDH7M4eHSdDD&order_id=3
+MOD DETAILS:
+   modFile   : C:\OpenServer\domains\indicart\vqmod/xml/paper_mod.xml
+   id        : This vqmod contributes to the following custom functionalities: table view, paper filter & addition of multiples to cart.
+   version   : 2.2.0.0
+   vqmver    : 2.3
+   author    : dk.pochtamp@gmail.com
+
+File Name    : /admin/view/template/sale/vdi_order_info.tpl(1)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <td class="text-right"><?php echo $product['price']; ?></td>
+
+----------------------------------------------------------------------
+
+
+---------- Date: 2016-07-06 03:11:06 ~ IP : 127.0.0.1 ----------
+REQUEST URI : /admin/index.php?route=catalog/mvd_product/edit&token=8L5ZRnVqLM6zFuhskHPiqbv7ht5k6EuV&product_id=50
+MOD DETAILS:
+   modFile   : C:\OpenServer\domains\indicart\vqmod/xml/paper_mod.xml
+   id        : This vqmod contributes to the following custom functionalities: table view, paper filter & addition of multiples to cart.
+   version   : 2.2.0.0
+   vqmver    : 2.3
+   author    : dk.pochtamp@gmail.com
+
+File Name    : /admin/view/template/catalog/mvd_product_form.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php if ($mvd_vendor_tab) { ?>
+
+----------------------------------------------------------------------
+
+

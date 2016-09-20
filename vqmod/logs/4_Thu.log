@@ -1,0 +1,12 @@
+---------- Date: 2016-08-04 17:42:41 ~ IP : 127.0.0.1 ----------
+REQUEST URI : /admin/index.php?route=localisation/weight_class&token=vRYbBmC4cHCZW0dPaXOfZCq1Lvwtc8Bx
+MOD DETAILS:
+   modFile   : C:\OpenServer\domains\indicart\vqmod/xml/admin_mod.xml
+   id        : This vqmod extends: countries, geozones & weight classes.
+   version   : 2.2.0.0
+   vqmver    : 2.3
+   author    : dk.pochtamp@gmail.com
+VQModObject::parseMods - Could not resolve path for [/admin/language/localisation/en-gb/weight_class.php] (SKIPPED)
+----------------------------------------------------------------------
+
+

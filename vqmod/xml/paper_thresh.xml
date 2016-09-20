@@ -1,0 +1,58 @@
+<modification>
+	<id><![CDATA[This vqmod extends: categories.]]></id>
+	<version><![CDATA[2.2.0.0]]></version>
+	<vqmver><![CDATA[2.3]]></vqmver>
+	<author><![CDATA[dk.pochtamp@gmail.com]]></author>
+
+	<file path="/admin/controller/catalog/" name="category.php">
+        <operation>
+			<search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+			<add><![CDATA[
+			$exists_alt = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "category` LIKE 'threshold'");
+			if (!$exists_alt->rows) $this->db->query("ALTER TABLE `" . DB_PREFIX . "category` ADD `threshold` INT(11) NOT NULL default '0'");
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="before"><![CDATA[$this->response->setOutput($this->load->view('catalog/category_form', $data));]]></search>
+			<add><![CDATA[
+            if (isset($this->request->post['threshold'])) {
+    			$data['threshold'] = $this->request->post['threshold'];
+    		} elseif (!empty($category_info)) {
+    			$data['threshold'] = $category_info['threshold'];
+    		} else {
+    			$data['threshold'] = true;
+    		}
+            ]]></add>
+		</operation>
+    </file>
+
+    <file path="/admin/model/catalog/" name="category.php">
+        <operation>
+			<search position="replace"><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', date_modified = NOW(), date_added = NOW()");]]></search>
+			<add><![CDATA[
+            $this->db->query("INSERT INTO " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', threshold = '" . (int)$data['threshold'] . "', date_modified = NOW(), date_added = NOW()");
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="replace"><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', date_modified = NOW() WHERE category_id = '" . (int)$category_id . "'");]]></search>
+			<add><![CDATA[
+            $this->db->query("UPDATE " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', threshold = '" . (int)$data['threshold'] . "', date_modified = NOW() WHERE category_id = '" . (int)$category_id . "'");
+            ]]></add>
+		</operation>
+    </file>
+
+    <file path="/admin/view/template/catalog/" name="category_form.tpl">
+        <operation>
+			<search position="after"><![CDATA[<div class="tab-pane" id="tab-data">]]></search>
+			<add><![CDATA[
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-threshold">Threshold</label>
+                <div class="col-sm-10">
+                    <input type="text" name="threshold" value="<?php echo $threshold; ?>" placeholder="Threshold" id="input-threshold" class="form-control" />
+                </div>
+            </div>
+            ]]></add>
+		</operation>
+    </file>
+
+</modification>

@@ -1,0 +1,389 @@
+<modification>
+	<id><![CDATA[This vqmod extends: options.]]></id>
+	<version><![CDATA[2.2.0.0]]></version>
+	<vqmver><![CDATA[2.3]]></vqmver>
+	<author><![CDATA[dk.pochtamp@gmail.com]]></author>
+
+	<file path="/admin/model/catalog/" name="product.php">
+		<operation>
+			<search position="before"><![CDATA[public function getTotalProductsByOptionId($option_id) {]]></search>
+			<add><![CDATA[
+			public function getTotalProductsByOptionValueId($option_value_id) {
+				$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "product_option_value WHERE option_value_id = '" . (int)$option_value_id . "'");
+
+				return $query->row['total'];
+			}
+            ]]></add>
+		</operation>
+    </file>
+
+	<file path="/admin/controller/catalog/" name="option.php">
+		<operation>
+			<search position="before"><![CDATA[$this->response->setOutput($this->load->view('catalog/option_form', $data));]]></search>
+			<add><![CDATA[
+			$data['units'] = array();
+			$data['zones'] = array();
+			$data['new_base_units'] = array();
+			$data['new_units'] = array();
+			$data['new_zones'] = array();
+
+			$old_base_units = array();
+			$old_units = array();
+			$old_zones = array();
+
+			$this->load->model('localisation/weight_class');
+			$this->load->model('localisation/zone');
+
+			$units = $this->model_localisation_weight_class->getWeightClasses();
+			$zones = $this->model_localisation_zone->getZones();
+
+			foreach ($units as $unit) {
+				$data['units'][] = array(
+					'unit'            => $unit['unit'],
+					'value'           => $unit['value'],
+					'unit_type' 	  => key_exists('unit_type', $unit) ? $unit['unit_type'] : '',
+				);
+			}
+
+			foreach ($zones as $zone) {
+				if ($zone['country_id'] > 257)
+				$data['zones'][] = array(
+					'country' => $zone['country'],
+					'name'    => $zone['name'],
+					'code'    => $zone['code'],
+				);
+			}
+
+			foreach ($option_values as $option_value) {
+				if ($data['option_alt'] && $data['option_alt'] == 1)
+					$old_base_units[] = $option_value['option_value_description'][1]['name'];
+				if ($data['option_alt'] && $data['option_alt'] == 2)
+					$old_units[] = $option_value['option_value_description'][1]['name'];
+				if ($data['option_alt'] && $data['option_alt'] == 4)
+					$old_zones[] = explode(' (', $option_value['option_value_description'][1]['name'], 2)[0];
+
+			}
+
+			foreach ($data['units'] as $cunit) {
+				if (!in_array($cunit['unit'], $old_base_units) && $cunit['unit_type'] < 1)
+					$data['new_base_units'][] = array(
+						'unit'    	=> $cunit['unit'],
+						'value'    	=> $cunit['value'],
+						'unit_type' => $cunit['unit_type'],
+					);
+				if (!in_array($cunit['unit'], $old_units) && $cunit['unit_type'] > 0)
+					$data['new_units'][] = array(
+						'unit'    	=> $cunit['unit'],
+						'value'    	=> $cunit['value'],
+						'unit_type' => $cunit['unit_type'],
+					);
+			}
+
+			foreach ($data['zones'] as $czone) {
+				if (!in_array($czone['code'], $old_zones))
+					$data['new_zones'][] = array(
+						'country' => $czone['country'],
+						'name'    => $czone['name'],
+						'code'    => $czone['code'],
+					);
+			}
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+			<add><![CDATA[
+			$exists_alt = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "option` LIKE 'option_alt'");
+			// $exists_add = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "option_value_description` LIKE 'option_add'");
+
+			if (!$exists_alt->rows) $this->db->query("ALTER TABLE `" . DB_PREFIX . "option` ADD `option_alt` TINYINT(1) NOT NULL default '0'");
+			// if (!$exists_add->rows) $this->db->query("ALTER TABLE `" . DB_PREFIX . "option_value_description` ADD `option_add` VARCHAR(128) NOT NULL");
+
+			$data['count_alt'] = 0;
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[foreach ($results as $result) {]]></search>
+			<add><![CDATA[
+			if (key_exists('option_alt', $result)) {
+				if ($result['option_alt'] > 0) $data['count_alt']++;
+			}
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$data['options'][] = array(]]></search>
+			<add><![CDATA[
+			'option_alt' => key_exists('option_alt', $result) ? $result['option_alt'] : '',
+            ]]></add>
+		</operation>
+		$this->model_catalog_product->getTotalProductsByOptionValueId($option_value_id)
+		<operation>
+			<search position="after"><![CDATA[$data['option_values'][] = array(]]></search>
+			<add><![CDATA[
+			'count_assigned' => $this->model_catalog_product->getTotalProductsByOptionValueId($option_value['option_value_id']),
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA['image'                    => $image,]]></search>
+			<add><![CDATA[
+			'image' => $option_value['image'],
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="before"><![CDATA[if (isset($this->request->post['type'])) {]]></search>
+			<add><![CDATA[
+			if (isset($this->request->post['option_alt'])) {
+				$data['option_alt'] = $this->request->post['option_alt'];
+			} elseif (!empty($option_info)) {
+				$data['option_alt'] = key_exists('option_alt', $option_info) ? $option_info['option_alt'] : '';
+			} else {
+				$data['option_alt'] = '';
+			}
+
+			$this->load->model('catalog/product');
+            ]]></add>
+		</operation>
+    </file>
+
+	<file path="/admin/model/catalog/" name="option.php">
+		<operation>
+			<search position="replace"><![CDATA[$this->db->query("INSERT INTO `" . DB_PREFIX . "option` SET type = '" . $this->db->escape($data['type']) . "', sort_order = '" . (int)$data['sort_order'] . "'");]]></search>
+			<add><![CDATA[
+			$this->db->query("INSERT INTO `" . DB_PREFIX . "option` SET type = '" . $this->db->escape($data['type']) . "', sort_order = '" . (int)$data['sort_order'] . "', option_alt = '" . $data['option_alt'] . "'");
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$this->db->query("UPDATE `" . DB_PREFIX . "option` SET type = '" . $this->db->escape($data['type']) . "', sort_order = '" . (int)$data['sort_order'] . "' WHERE option_id = '" . (int)$option_id . "'");]]></search>
+			<add><![CDATA[
+			$this->db->query("UPDATE `" . DB_PREFIX . "option` SET type = '" . $this->db->escape($data['type']) . "', sort_order = '" . (int)$data['sort_order'] . "', option_alt = '" . $data['option_alt'] . "' WHERE option_id = '" . (int)$option_id . "'");
+            ]]></add>
+		</operation>
+		<!-- <operation>
+			<search position="replace"><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "option_value_description SET option_value_id = '" . (int)$option_value_id . "', language_id = '" . (int)$language_id . "', option_id = '" . (int)$option_id . "', name = '" . $this->db->escape($option_value_description['name']) . "'");]]></search>
+			<add><![CDATA[
+			$this->db->query("INSERT INTO " . DB_PREFIX . "option_value_description SET option_value_id = '" . (int)$option_value_id . "', language_id = '" . (int)$language_id . "', option_id = '" . (int)$option_id . "', name = '" . $this->db->escape($option_value_description['name']) . "', option_add = '" . $this->db->escape($option_value_description['option_add']) . "'");
+            ]]></add>
+		</operation> -->
+    </file>
+
+	<file path="/admin/view/template/catalog/" name="option_form.tpl">
+		<operation>
+			<search position="after"><![CDATA[<form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-option" class="form-horizontal">]]></search>
+			<add><![CDATA[
+			<div class="form-group required option-alt <?php if ($option_alt == 0 && $option_description) echo 'hidden'; ?>">
+				<label class="col-sm-2 control-label">Paper Mod. Type</label>
+				<div class="col-sm-10">
+					<select name="option_alt" class="form-control">
+						<option value="0" <?php if ($option_alt == 0) echo 'selected'; ?> >--</option>
+						<option value="1" <?php if ($option_alt == 1) echo 'selected'; ?> >Base Unit</option>
+						<option value="2" <?php if ($option_alt == 2) echo 'selected'; ?> >Alt. Unit</option>
+						<option value="3" <?php if ($option_alt == 3) echo 'selected'; ?> >Alt. Quantity</option>
+						<option value="4" <?php if ($option_alt == 4) echo 'selected'; ?> >Alt. Location</option>
+					</select>
+				</div>
+			</div>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[function addOptionValue() {]]></search>
+			<add><![CDATA[
+			function addOptionValue(ozone = '', ostate = '') {
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[html += '      <span class="input-group-addon"><img src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png" title="<?php echo $language['name']; ?>" /></span><input type="text" name="option_value[' + option_value_row + '][option_value_description][<?php echo $language['language_id']; ?>][name]" value="" placeholder="<?php echo $entry_option_value; ?>" class="form-control" />';]]></search>
+			<add><![CDATA[
+			html += '      <span class="input-group-addon"><img src="language/<?php echo $language['code']; ?>/<?php echo $language['code']; ?>.png" title="<?php echo $language['name']; ?>" /></span><input type="text" name="option_value[' + option_value_row + '][option_value_description][<?php echo $language['language_id']; ?>][name]" value="' + ozone + '" placeholder="<?php echo $entry_option_value; ?>" class="form-control" ' + ((ozone != '') ? 'readonly' : '') + ' />';
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[html += '  <td class="text-left"><a href="" id="thumb-image' + option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="<?php echo $placeholder; ?>" alt="" title="" data-placeholder="<?php echo $placeholder; ?>" /></a><input type="hidden" name="option_value[' + option_value_row + '][image]" value="" id="input-image' + option_value_row + '" /></td>';]]></search>
+			<add><![CDATA[
+			html += '  <td class="text-left"><a href="" id="thumb-image' + option_value_row + '" data-toggle="image" class="img-thumbnail"><img src="<?php echo $placeholder; ?>" alt="" title="" data-placeholder="<?php echo $placeholder; ?>" /></a><input type="hidden" name="option_value[' + option_value_row + '][image]" value="' + ostate + '" id="input-image' + option_value_row + '" /></td>';
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[
+			<script>
+				var sval = '';
+				$('html').on('change', '.option-alt select', function(){
+					if ($(this).val() == 0) {
+						$('.form-group:not(.option-alt):not(.required)').slideDown();
+						$('.form-group.required:not(.option-alt) input').val('');
+						$('#option-value tbody').empty();
+						$('#option-value td:not(:first-of-type):not(:last-of-type), #option-value tfoot').show();
+						$('#option-value td:first-of-type input').prop('readonly', false);
+					}
+					else {
+						$('.form-group:not(.option-alt):not(.required)').slideUp();
+						$('.form-group.required:not(.option-alt) input').val($(this).find('option:selected').text());
+						sval = $('select[name=type]').val();
+
+						if ($(this).val() == 1) {
+							$('select[name=type]').val('select');
+							$('#option-value tbody').empty();
+							<?php foreach ($units as $base_unit) : ?>
+								<?php if ($base_unit['unit_type'] < 1) : ?>
+									addOptionValue("<?= $base_unit['unit'] ?>", "<?= $base_unit['value'] ?>");
+								<?php endif; ?>
+							<?php endforeach; ?>
+							$('#option-value td:not(:first-of-type):not(:last-of-type), #option-value tfoot').hide();
+							$('#option-value td:first-of-type input').prop('readonly', true);
+						}
+						else if ($(this).val() == 2) {
+							$('select[name=type]').val('select');
+							$('#option-value tbody').empty();
+							<?php foreach ($units as $unit) : ?>
+								<?php if ($unit['unit_type'] > 0) : ?>
+									addOptionValue("<?= $unit['unit'] ?>");
+								<?php endif; ?>
+							<?php endforeach; ?>
+							$('#option-value td:not(:first-of-type):not(:last-of-type), #option-value tfoot').hide();
+							$('#option-value td:first-of-type input').prop('readonly', true);
+						}
+						else if ($(this).val() == 3) $('select[name=type]').val('text');
+						else if ($(this).val() == 4) {
+							$('select[name=type]').val('select');
+							$('#option-value tbody').empty();
+							<?php foreach ($zones as $zone) : ?>
+							addOptionValue("<?= $zone['code'] . ' (' . $zone['name'] . ')' ?>", "<?= $zone['country'] ?>");
+							<?php endforeach; ?>
+							$('#option-value td:not(:first-of-type):not(:last-of-type), #option-value tfoot').hide();
+							$('#option-value td:first-of-type input').prop('readonly', true);
+						}
+					}
+					$('select[name=type]').trigger('change');
+				});
+
+				<?php if ($option_alt > 0) : ?>
+					$('#option-value td:first-of-type input').prop('readonly', true);
+				<?php endif; ?>
+
+				<?php if($option_alt == 4 && count($new_zones) > 0) : ?>
+					$('html').on('click', '.z-refresh', function() {
+						<?php foreach($new_zones as $nzone) : ?>
+							addOptionValue("<?= $nzone['code'] . ' (' . $nzone['name'] . ')' ?>", "<?= $nzone['country'] ?>");
+						<?php endforeach; ?>
+						setTimeout(function(){
+							$('.z-refresh').prop('disabled', true);
+							$('.z-refresh').closest('td').attr('data-original-title', 'You\'ve just updated it. Save now.<br/>If you\'ve already removed the updates somehow, refresh the page to re-enable this button.');
+						}, 500);
+					});
+				<?php elseif($option_alt == 2 && count($new_units) > 0) : ?>
+					$('html').on('click', '.z-refresh', function() {
+						<?php foreach($new_units as $nunit) : ?>
+							addOptionValue("<?= $nunit['unit'] ?>", "<?= $nunit['value'] ?>");
+						<?php endforeach; ?>
+						setTimeout(function(){
+							$('.z-refresh').prop('disabled', true);
+							$('.z-refresh').closest('td').attr('data-original-title', 'You\'ve just updated it. Save now.<br/>If you\'ve already removed the updates somehow, refresh the page to re-enable this button.');
+						}, 500);
+					});
+				<?php elseif($option_alt == 1 && count($new_base_units) > 0) : ?>
+					$('html').on('click', '.z-refresh', function() {
+						<?php foreach($new_base_units as $nbunit) : ?>
+							addOptionValue("<?= $nbunit['unit'] ?>", "<?= $nbunit['value'] ?>");
+						<?php endforeach; ?>
+						setTimeout(function(){
+							$('.z-refresh').prop('disabled', true);
+							$('.z-refresh').closest('td').attr('data-original-title', 'You\'ve just updated it. Save now.<br/>If you\'ve already removed the updates somehow, refresh the page to re-enable this button.');
+						}, 500);
+					});
+				<?php else : ?>
+					$('.z-refresh').prop('disabled', true);
+				<?php endif; ?>
+			</script>
+
+			<style>
+				<?php if ($option_alt > 0) : ?>
+					.form-group:not(.required), .option-alt, #option-value td:not(:first-of-type):not(:last-of-type), #option-value tfoot { display: none }
+					.form-group.required { border: none }
+				<?php endif; ?>
+				#option-value thead td { border-bottom: none }
+				#option-value td:last-of-type { width: 5% }
+			</style>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<td></td>]]></search>
+			<add><![CDATA[
+			<td class="text-left" data-toggle="tooltip" title="<?= $option_alt == 4 && count($new_zones) > 0 ? 'There is(are) ' . count($new_zones) . ' NEW zone(s).<br/>Need to UPDATE.' : ($option_alt == 2 && count($new_units) > 0 ? 'There is(are) ' . count($new_units) . ' NEW unit(s).<br/>Need to UPDATE.' : ($option_alt == 1 && count($new_base_units) > 0 ? 'There is(are) ' . count($new_base_units) . ' NEW unit(s).<br/>Need to UPDATE.' : 'There is nothing new.<br/>No need to update.')) ?>" data-placement="left"><?php if($option_alt && $option_alt > 0): ?><button type="button" class="btn btn-primary z-refresh"><i class="fa fa-refresh"></i></button><?php endif; ?></td>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<td class="text-left"><button type="button" onclick="$('#option-value-row<?php echo $option_value_row; ?>').remove();" data-toggle="tooltip" title="<?php echo $button_remove; ?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>]]></search>
+			<add><![CDATA[
+			<td data-toggle="tooltip" data-placement="left" data-original-title="<?=($option_value['count_assigned'] > 0) ? 'It is assigned to ' . $option_value['count_assigned'] . ' product(s).<br/>CANNOT BE REMOVED.' : 'It is not yet assigned to any.<br/>CAN BE REMOVED safely.' ?>" class="text-left"><button type="button" onclick="$('#option-value-row<?php echo $option_value_row; ?>').remove();" <?=($option_value['count_assigned'] > 0) ? 'disabled style="filter:grayscale(1)"' : '' ?> class="btn btn-danger" ><i class="fa fa-minus-circle"></i></button></td>
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="/admin/view/template/catalog/" name="option_list.tpl">
+        <operation>
+			<search index="2" position="replace"><![CDATA[<tr>]]></search>
+			<add><![CDATA[
+			<tr <?= $count_alt > 0 && $option['option_alt'] == 0 ? 'class="collapse option-row"' : ($count_alt > 0 ? 'style="color: #28e; background-color: #fafafa"' : ''); ?> >
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<td class="text-right"><?php echo $option['sort_order']; ?></td>]]></search>
+			<add><![CDATA[
+			<td class="text-right"><?= $option['option_alt'] == 0 ? $option['sort_order'] : 'alt.' ?></td>
+            ]]></add>
+		</operation>
+		<!-- <operation>
+			<search position="replace"><![CDATA[<td class="text-right"><a href="<?php echo $option['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>]]></search>
+			<add><![CDATA[
+			<td class="text-right"><a href="<?php echo $option['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary <?php if ($option['option_alt'] != 0) echo 'disabled'; ?>"  ><i class="fa fa-pencil"></i></a></td>
+            ]]></add>
+		</operation> -->
+		<operation>
+			<search position="before"><![CDATA[<div class="col-sm-6 text-left"><?php echo $pagination; ?></div>]]></search>
+			<add><![CDATA[
+			<?php if($count_alt > 0): ?>
+            	<div class="col-sm-6 text-left"><a href=".option-row" data-toggle="collapse" class="btn btn-sm btn-primary">Other Options</a></div>
+			<?php endif; ?>
+            ]]></add>
+		</operation>
+    </file>
+
+	<file path="/admin/view/template/catalog/" name="product_form.tpl">
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[
+            <style> select[name*=price_prefix], select[name*=points_prefix], select[name*=weight_prefix] { float: left; display: inline-block; width: 40% } input[name*=price], input[name*=points], input[name*=weight] { display: inline-block; width: 50% } table[id*=option-value] thead td { font-weight: normal; text-align: center } table[id*=option-value] .form-control { height: 30px; padding: 5px } table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6) { display: none } table[id*=option-value] td.m { display: table-cell } table[id*=option-value], table[id*=option-value] tfoot td { border: none } table[id*=option-value] thead td { border-bottom-width: 1px; border-top: 1px solid #ddd !important } table[id*=option-value] tr td:last-of-type { text-align: center; width: 5% } </style>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="replace"><![CDATA[html += '	      <option value="0"><?php echo $text_no; ?></option>';]]></search>
+			<add><![CDATA[
+            html += '	      <option value="0" selected><?php echo $text_no; ?></option>';
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[html += '        <td colspan="6"></td>';]]></search>
+			<add><![CDATA[
+            html += '        <td></td><td></td><td></td><td></td><td></td><td></td>';
+            ]]></add>
+		</operation>
+		<operation>
+			<search index="1" position="replace"><![CDATA[<td colspan="6"></td>]]></search>
+			<add><![CDATA[
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            ]]></add>
+		</operation>
+		<operation>
+			<search index="2" position="replace"><![CDATA[<td></td>]]></search>
+			<add><![CDATA[
+            <td><div class="btn"  data-toggle="tooltip" data-original-title="All Settings" onclick="$('table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6)').toggleClass('m');$(this).find('i').toggleClass('fa-chevron-left').toggleClass('fa-chevron-right')"><i class="fa fa-chevron-left"></i></div></td>
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[html += '        <td></td>';]]></search>
+			<add><![CDATA[
+            html += '<td><div class="btn"  data-toggle="tooltip" data-original-title="All Settings" onclick="$(\'table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6)\').toggleClass(\'m\');$(this).find(\'i\').toggleClass(\'fa-chevron-left\').toggleClass(\'fa-chevron-right\')"><i class="fa fa-chevron-left"></i></div></td>';
+            ]]></add>
+		</operation>
+    </file>
+
+</modification>

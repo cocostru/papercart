@@ -1,0 +1,185 @@
+<modification>
+	<id><![CDATA[This vqmod contributes to the following custom functionalities: multivendor extension.]]></id>
+	<version><![CDATA[2.2.0.0]]></version>
+	<vqmver><![CDATA[2.3]]></vqmver>
+	<author><![CDATA[dk.pochtamp@gmail.com]]></author>
+
+	<file path="/admin/view/template/sale/" name="vdi_order_list.tpl">
+	  <operation>
+	    <search position="replace" offset="1"><![CDATA[<label class="control-label" for="input-customer"><?php echo $entry_customer; ?></label>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace" offset="1"><![CDATA[<label class="control-label" for="input-total"><?php echo $entry_total; ?></label>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace" offset="5"><![CDATA[<label class="control-label" for="input-date-modified"><?php echo $entry_date_modified; ?></label>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace" offset="4"><![CDATA[<td class="text-left"><?php if ($sort == 'customer') { ?>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace"><![CDATA[<td class="text-left"><?php echo $order['customer']; ?></td>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace" offset="4"><![CDATA[<td class="text-right"><?php if ($sort == 'o.total') { ?>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace"><![CDATA[<td class="text-right"><?php echo $order['total']; ?></td>]]></search>
+			<add></add>
+		</operation>
+	</file>
+
+	<file path="/admin/view/template/dashboard/" name="vdi_recent.tpl">
+	  <operation>
+	    <search position="replace"><![CDATA[<td><?php echo $column_customer; ?></td>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace"><![CDATA[<td><?php echo $order['customer']; ?></td>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace"><![CDATA[<td class="text-right"><?php echo $column_total; ?></td>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace"><![CDATA[<td class="text-right"><?php echo $order['total']; ?></td>]]></search>
+			<add></add>
+		</operation>
+	</file>
+
+	<file path="/admin/view/template/common/" name="vdi_menu.tpl">
+    <operation>
+	    <search position="replace"><![CDATA[<li><a href="<?php echo $vdi_coupon; ?>"><?php echo $text_coupon; ?></a></li>]]></search>
+			<add></add>
+		</operation>
+	  <operation>
+	    <search position="replace"><![CDATA[<li><a href="<?php echo $vdi_transaction; ?>"><?php echo $text_vendor_transaction; ?></a></li>]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace" offset="5"><![CDATA[<li id="reports"><a class="parent"><i class="fa fa-bar-chart-o fa-fw"></i> <span><?php echo $text_reports; ?></span></a>]]></search>
+			<add></add>
+		</operation>
+	</file>
+
+	<file path="/admin/controller/sale/" name="vdi_order.php">
+	  <operation>
+	    <search position="before"><![CDATA[foreach ($products as $product) {]]></search>
+			<add><![CDATA[
+			$this->load->model('catalog/vdi_product');
+			]]></add>
+		</operation>
+		<operation>
+	    <search position="after"><![CDATA[foreach ($products as $product) {]]></search>
+			<add><![CDATA[
+			$product_info = $this->model_catalog_vdi_product->getProduct($product['product_id']);
+			]]></add>
+		</operation>
+		<operation>
+	    <search position="after"><![CDATA[$data['products'][] = array(]]></search>
+			<add><![CDATA[
+			'price_to_vendor' => $this->currency->format($product_info['product_cost'], $order_info['currency_code'], $order_info['currency_value']),
+			'total_to_vendor' => $this->currency->format($product_info['product_cost']*$product['quantity'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="/admin/view/template/sale/" name="vdi_order_info.tpl">
+	  <operation>
+	    <search position="replace" offset="1"><![CDATA[<td class="text-right"><?php echo $product['price']; ?></td>]]></search>
+			<add><![CDATA[
+			<td class="text-right"><a class="pull-left"><small>real price: <?php echo $product['price']; ?></small></a> <?php echo $product['price_to_vendor']; ?></td>
+			<td class="text-right"><a class="pull-left"><small>real total: <?php echo $product['total']; ?></small></a> <?php echo $product['total_to_vendor']; ?></td>
+			]]></add>
+		</operation>
+		<operation>
+	    <search position="replace" offset="35"><![CDATA[<?php foreach ($vouchers as $voucher) { ?>]]></search>
+			<add></add>
+		</operation>
+	</file>
+
+	<file path="/admin/view/template/catalog/" name="mvd_product_form.tpl">
+	  <operation>
+	    <search position="replace" offset="8"><![CDATA[function total_cost() {]]></search>
+			<add></add>
+		</operation>
+		<operation>
+	    <search position="replace"><![CDATA[<label class="col-sm-2 control-label" for="input-price"><?php echo $entry_price; ?></label>]]></search>
+			<add><![CDATA[
+			<label class="col-sm-2 control-label text-primary" for="input-price"><?php echo $entry_price; ?> <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" data-original-title="This is a REAL price. To set price that can be seen by the vendor go to the VENDOR TAB (next one)."></i></label>
+			]]></add>
+		</operation>
+		<operation>
+	    <search position="replace"><![CDATA[<label class="col-sm-2 control-label" for="input-product-cost"><?php echo $entry_vendor_product_cost; ?></label>]]></search>
+			<add><![CDATA[
+			<label class="col-sm-2 control-label text-primary" for="input-product-cost"><?php echo $entry_vendor_product_cost; ?> <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" data-original-title="This will be shown to the vendor. At all instances, should it be a product viewing/editing or an order notification."></i></label>
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="/admin/controller/catalog/" name="vdi_product.php">
+	  <operation>
+	    <search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+			<add><![CDATA[
+			$this->load->model('catalog/vdi_product');
+			$data['yet'] = false;
+			]]></add>
+		</operation>
+		<operation>
+	    <search position="after"><![CDATA[foreach ($results as $result) {]]></search>
+			<add><![CDATA[
+			$product_info = $this->model_catalog_vdi_product->getProduct($result['product_id']);
+			if ($result['status'] != 1) $data['yet'] = true;
+			]]></add>
+		</operation>
+		<operation>
+	    <search position="after"><![CDATA[$data['products'][] = array(]]></search>
+			<add><![CDATA[
+			'price_to_vendor' => $product_info['product_cost'],
+			]]></add>
+		</operation>
+		<operation>
+	    <search position="before"><![CDATA[$this->load->model('catalog/recurring');]]></search>
+			<add><![CDATA[
+			$this->load->model('catalog/vdi_product');
+			$product_ven = $this->model_catalog_vdi_product->getProduct($product_info['product_id']);
+			$data['price_to_vendor'] = $product_ven['product_cost'];
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="/admin/view/template/catalog/" name="vdi_product_list.tpl">
+	  <operation>
+	    <search position="replace" offset="5"><![CDATA[<td class="text-left"><?php if ($product['special']) { ?>]]></search>
+			<add><![CDATA[<td class="text-left"><?php echo $product['price_to_vendor']; ?> <?php if($yet): ?><a><i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Price will be updated after approval."></i></a><?php endif; ?></td>]]></add>
+		</operation>
+		<operation>
+	    <search position="replace" offset="3"><![CDATA[<div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>]]></search>
+			<add><![CDATA[
+			<div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?> <a><i class="fa fa-exclamation-circle"></i> Remember, prices being set are updated after administration approval.</a>
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+			<?php } elseif ($yet) { ?>
+			<div class="alert alert-info"><i class="fa fa-exclamation-circle"></i> Your products are not approved yet. If your lid came off, please contact the administration.
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+			<?php } ?>
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="/admin/view/template/catalog/" name="vdi_product_form.tpl">
+	  <operation>
+	    <search position="replace"><![CDATA[<input type="text" name="price" value="<?php echo $price; ?>" placeholder="<?php echo $entry_price; ?>" id="input-price" class="form-control" />]]></search>
+			<add><![CDATA[<input type="text" name="price" value="<?php echo $price_to_vendor; ?>" placeholder="<?php echo $entry_price; ?>" id="input-price" class="form-control" />]]></add>
+		</operation>
+	</file>
+
+</modification>
