@@ -71,15 +71,14 @@
 			);
 
 			foreach($this->model_catalog_product->getProducts($filter_data) as $result){
+
 				$product_info = $this->model_catalog_product->getProduct($result['product_id']);
 				$product_cats = $this->model_catalog_product->getCategories($result['product_id']);
 
 				foreach ($product_cats as $product_cat) {
-					$category_info = $this->model_catalog_category->getCategory($product_cat);
-					// $thresholds[] = $category_info['threshold'];
+					$category_info = $this->model_catalog_category->getCategory($product_cat['category_id']);
+					$thresholds[$product_info['model']][] = $category_info['threshold'];
 				}
-
-				// print_r($thresholds);
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -98,7 +97,7 @@
 				if ($product_info['quantity'] <= 0) {
 					$data['stock'] = $product_info['stock_status'];
 				} elseif ($this->config->get('config_stock_display')) {
-					$data['stock'] = $product_info['quantity'];
+					$data['stock'] = max($thresholds[$product_info['model']]) != 0 && max($thresholds[$product_info['model']]) < $product_info['quantity'] ? max($thresholds[$product_info['model']]) . ' +' : $product_info['quantity'];
 				} else {
 					$data['stock'] = $this->language->get('text_instock');
 				}
@@ -133,6 +132,7 @@
 					'special'     => $special,
 					'href'        => $this->url->link('product/product', '&product_id=' . $result['product_id'])
 				);
+
 			}
 	    	]]></add>
 		</operation>
@@ -184,11 +184,17 @@
 			<add><![CDATA[
 			$this->load->model('catalog/manufacturer');
 			$product_info = $this->model_catalog_product->getProduct($result['product_id']);
+			$product_cats = $this->model_catalog_product->getCategories($result['product_id']);
+
+			foreach ($product_cats as $product_cat) {
+				$category_info = $this->model_catalog_category->getCategory($product_cat['category_id']);
+				$thresholds[$product_info['model']][] = $category_info['threshold'];
+			}
 		    $manufacturer = $this->model_catalog_manufacturer->getManufacturer($product_info['manufacturer_id']);
 			if ($product_info['quantity'] <= 0) {
 				$data['stock'] = $product_info['stock_status'];
 			} elseif ($this->config->get('config_stock_display')) {
-				$data['stock'] = $product_info['quantity'];
+				$data['stock'] = max($thresholds[$product_info['model']]) != 0 && max($thresholds[$product_info['model']]) < $product_info['quantity'] ? max($thresholds[$product_info['model']]) . ' +' : $product_info['quantity'];
 			} else {
 				$data['stock'] = $this->language->get('text_instock');
 			}
@@ -270,11 +276,17 @@
 			<add><![CDATA[
 			$this->load->model('catalog/manufacturer');
 			$product_info = $this->model_catalog_product->getProduct($result['product_id']);
+			$product_cats = $this->model_catalog_product->getCategories($result['product_id']);
+
+			foreach ($product_cats as $product_cat) {
+				$category_info = $this->model_catalog_category->getCategory($product_cat['category_id']);
+				$thresholds[$product_info['model']][] = $category_info['threshold'];
+			}
 		  	$manufacturer = $this->model_catalog_manufacturer->getManufacturer($product_info['manufacturer_id']);
 			if ($product_info['quantity'] <= 0) {
 				$data['stock'] = $product_info['stock_status'];
 			} elseif ($this->config->get('config_stock_display')) {
-				$data['stock'] = $product_info['quantity'];
+				$data['stock'] = max($thresholds[$product_info['model']]) != 0 && max($thresholds[$product_info['model']]) < $product_info['quantity'] ? max($thresholds[$product_info['model']]) . ' +' : $product_info['quantity'];
 			} else {
 				$data['stock'] = $this->language->get('text_instock');
 			}
