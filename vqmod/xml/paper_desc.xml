@@ -1,0 +1,84 @@
+<modification>
+	<id><![CDATA[This vqmod implements: description autogeneration.]]></id>
+	<version><![CDATA[2.2.0.0]]></version>
+	<vqmver><![CDATA[2.3]]></vqmver>
+	<author><![CDATA[dk.pochtamp@gmail.com]]></author>
+
+	<file path="/admin/view/template/catalog/" name="product_form.tpl">
+        <operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[
+            <style> .placehint { position: absolute; right: 25px; top: 9px; color: #ddd } </style>
+            <script type="text/javascript"><!--
+                $('html').on('blur', '#input-length, #input-width, #input-height, #input-manufacturer', function(){
+                    delzero = function (val) {
+                        if (Number(parseFloat(val).toFixed(0)) != Number(parseFloat(val).toFixed(1))) val = parseFloat(val).toFixed(1);
+                        else val = parseFloat(val).toFixed(0);
+                        return val;
+                    }
+
+                    setTimeout(function(){
+                        var convert = <?php foreach($length_classes as $class) if($class['length_class_id'] == $length_class_id) echo $class['value']; ?>,
+                            len = delzero($('#input-length').val() / convert),
+                            wid = delzero($('#input-width').val() / convert),
+                            gsm = delzero($('#input-height').val() / 1),
+                            man = $('#input-manufacturer').val(),
+                            inLen = delzero(len / 2.54),
+                            inWid = delzero(wid / 2.54),
+                            desc;
+
+                        if (gsm == 0) desc = '';
+                        else if (gsm > 0 && len == 0 && wid == 0) desc = gsm + 'gsm ';
+                        else if (gsm > 0 && (len > 0 || wid > 0)) desc = gsm + ' / ';
+
+                        if (len > 0 && wid == 0) desc += len + ' x Roll' + ' (' + inLen + 'in) ';
+                        else if (len == 0 && wid > 0) desc += 'Roll x ' + wid + ' (' + inWid + 'in) ';
+                        else if (len > 0 && wid > 0) desc += len + ' x ' + wid + ' (' + inLen + 'in x ' + inWid + 'in) ';
+
+                        desc += man;
+
+                        $('#input-description1').html(desc);
+                        $('#input-description1').parent().find('.note-editable').html(desc);
+
+                    }, 900);
+
+                });
+
+                $('#input-length').trigger('blur');
+
+            //--></script>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="replace"><![CDATA[<label class="col-sm-2 control-label" for="input-length"><?php echo $entry_dimension; ?></label>]]></search>
+			<add><![CDATA[
+            <label class="col-sm-2 control-label" for="input-length">L x W x GSM</label>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="after"><![CDATA[<input type="text" name="length" value="<?php echo $length; ?>" placeholder="<?php echo $entry_length; ?>" id="input-length" class="form-control" />]]></search>
+			<add><![CDATA[
+            <span class="placehint">Length</span>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="after"><![CDATA[<input type="text" name="width" value="<?php echo $width; ?>" placeholder="<?php echo $entry_width; ?>" id="input-width" class="form-control" />]]></search>
+			<add><![CDATA[
+            <span class="placehint">Width</span>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="after"><![CDATA[<input type="text" name="height" value="<?php echo $height; ?>" placeholder="<?php echo $entry_height; ?>" id="input-height" class="form-control" />]]></search>
+			<add><![CDATA[
+            <span class="placehint">GSM</span>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="replace"><![CDATA[<input type="text" name="height" value="<?php echo $height; ?>" placeholder="<?php echo $entry_height; ?>" id="input-height" class="form-control" />]]></search>
+			<add><![CDATA[
+            <input type="text" name="height" value="<?php echo $height; ?>" placeholder="GSM" id="input-height" class="form-control" />
+            ]]></add>
+		</operation>
+    </file>
+
+</modification>

@@ -1,5 +1,5 @@
 <modification>
-	<id><![CDATA[This vqmod widely extends: header, home, category, search & category module.]]></id>
+	<id><![CDATA[This vqmod implements: header, home, category, search & category module.]]></id>
 	<version><![CDATA[2.2.0.0]]></version>
 	<vqmver><![CDATA[2.3]]></vqmver>
 	<author><![CDATA[dk.pochtamp@gmail.com]]></author>
@@ -114,6 +114,7 @@
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
+					'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')),
 					'stock'       => $data['stock'],
 					'location' 	  => $product_info['location'],
 					'manufacturer'=> $manufacturer,
@@ -218,15 +219,21 @@
 			'stock'       => $data['stock'],
 			'location' 	  => $product_info['location'],
 			'manufacturer'=> $manufacturer,
-			'length' 	  => $this->length->convert($product_info['length'], $product_info['length_class_id'], 1),
-			'width' 	  => $this->length->convert($product_info['width'], $product_info['length_class_id'], 1),
-			'gsm' 	  	  => $product_info['height'],
-			'weight' 	  => $product_info['weight'],
+			'length' 	  => number_format($this->length->convert($product_info['length'], $product_info['length_class_id'], 1), 1),
+			'width' 	  => number_format($this->length->convert($product_info['width'], $product_info['length_class_id'], 1), 1),
+			'gsm' 	  	  => number_format($product_info['height'], 0),
+			'weight' 	  => number_format($product_info['weight'], 2) . $this->weight->getUnit($product_info['weight_class_id']),
 			'weight_unit' => $this->weight->getUnit($product_info['weight_class_id']),
 			'base_unit'	  => $base_unit,
 			'alt_unit'	  => $alt_unit,
 			'alt_qty'	  => $alt_qty,
 			'alt_loc'	  => $alt_loc,
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA['description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..',]]></search>
+			<add><![CDATA[
+			'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')),
 			]]></add>
 		</operation>
 		<operation>
@@ -320,6 +327,12 @@
 			'alt_qty'	  => $alt_qty,
 			'alt_loc'	  => $alt_loc,
 	    	]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA['description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..',]]></search>
+			<add><![CDATA[
+			'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')),
+			]]></add>
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA[$this->response->setOutput($this->load->view('product/search', $data));]]></search>

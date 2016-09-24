@@ -1,5 +1,5 @@
 <modification>
-	<id><![CDATA[This vqmod extends: cart.]]></id>
+	<id><![CDATA[This vqmod implements: cart.]]></id>
 	<version><![CDATA[2.2.0.0]]></version>
 	<vqmver><![CDATA[2.3]]></vqmver>
 	<author><![CDATA[dk.pochtamp@gmail.com]]></author>

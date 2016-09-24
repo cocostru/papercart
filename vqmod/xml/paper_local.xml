@@ -1,5 +1,5 @@
 <modification>
-	<id><![CDATA[This vqmod extends: countries, geozones & weight classes.]]></id>
+	<id><![CDATA[This vqmod implements: countries, geozones & weight classes.]]></id>
 	<version><![CDATA[2.2.0.0]]></version>
 	<vqmver><![CDATA[2.3]]></vqmver>
 	<author><![CDATA[dk.pochtamp@gmail.com]]></author>
@@ -101,6 +101,17 @@
       		]]></add>
 		</operation>
     </file>
+
+	<!-- <file path="/system/library/cart/" name="length.php">
+		<operation>
+			<search position="before"><![CDATA[public function getUnit($length_class_id) {]]></search>
+			<add><![CDATA[
+			public function getLengths() {
+				return $this->lengths;
+			}
+      		]]></add>
+		</operation>
+    </file> -->
 
 	<file path="/admin/controller/localisation/" name="weight_class.php">
 		<operation>

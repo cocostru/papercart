@@ -250,21 +250,17 @@
                 </div>
               </div>
               <div class="form-group">
-                <!-- <label class="col-sm-2 control-label" for="input-length"><?php echo $entry_dimension; ?></label> -->
-                <label class="col-sm-2 control-label" for="input-length">L x W x GSM</label> <!-- to vQmod -->
+                <label class="col-sm-2 control-label" for="input-length"><?php echo $entry_dimension; ?></label>
                 <div class="col-sm-10">
                   <div class="row">
                     <div class="col-sm-4">
                       <input type="text" name="length" value="<?php echo $length; ?>" placeholder="<?php echo $entry_length; ?>" id="input-length" class="form-control" />
-                      <span style="position:absolute;right:25px;top:9px;color:#ddd">Length</span> <!-- to vQmod -->
                     </div>
                     <div class="col-sm-4">
                       <input type="text" name="width" value="<?php echo $width; ?>" placeholder="<?php echo $entry_width; ?>" id="input-width" class="form-control" />
-                      <span style="position:absolute;right:25px;top:9px;color:#ddd">Width</span> <!-- to vQmod -->
                     </div>
                     <div class="col-sm-4">
                       <input type="text" name="height" value="<?php echo $height; ?>" placeholder="<?php echo $entry_height; ?>" id="input-height" class="form-control" />
-                      <span style="position:absolute;right:25px;top:9px;color:#ddd">GSM</span> <!-- to vQmod -->
                     </div>
                   </div>
                 </div>
