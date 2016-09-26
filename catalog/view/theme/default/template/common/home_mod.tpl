@@ -121,7 +121,7 @@
                                         <?php if($product['alt_unit']): ?>
                                             <select name="option[<?= $product['alt_unit']['product_option_id'] ?>]" id="input-option[<?= $product['alt_unit']['product_option_id'] ?>]">
                                                 <?php foreach($product['alt_unit']['product_option_value'] as $option_value): ?>
-                                                        <option title="<?= 'Weight: ' . number_format($option_value['weight'], 2) . 'kg' ?>" value="<?php echo $option_value['product_option_value_id']; ?>"  data-val="<?= number_format($option_value['weight'], 2) ?>" <?= $product['gsm'] > 180 ? ($option_value['name'] == 'pkt' ? 'selected' : '') : ($option_value['name'] == 'ream' ? 'selected' : '') ?> >
+                                                        <option title="<?= 'Weight: ' . number_format($option_value['weight'], 2) . 'kg' ?>" value="<?php echo $option_value['product_option_value_id']; ?>"  data-val="<?= number_format($option_value['weight'], 2) ?>" <?= ($product['length'] < 1 && $product['width'] > 0) || ($product['width'] < 1 && $product['length'] > 0) ? ($option_value['name'] == 'roll' ? 'selected' : '') : ($product['gsm'] > 180 ? ($option_value['name'] == 'pkt' ? 'selected' : '') : ($option_value['name'] == 'ream' ? 'selected' : '')) ?> >
                                                             &nbsp;<?= $option_value['name'] ?>
                                                         </option>
                                                 <?php endforeach; ?>
