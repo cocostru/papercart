@@ -211,12 +211,30 @@
 			<tr style="<?php if($weight_class['unit_type'] == 1) echo 'color: #28e; background-color: #fafafa'?>">
             ]]></add>
 		</operation>
+		<!-- <operation>
+			<search position="after"><![CDATA[<td class="text-right"><?php echo $weight_class['value']; ?></td>]]></search>
+			<add><![CDATA[
+			<td class="text-right"><?php echo $weight_class['unit_type'] == 1 ? 'alt.' : ''; ?></td>
+            ]]></add>
+		</operation> -->
         <operation>
 			<search position="replace"><![CDATA[<td class="text-right"><?php echo $weight_class['value']; ?></td>]]></search>
 			<add><![CDATA[
 			<td class="text-right"><?= $weight_class['unit_type'] == 0 ? $weight_class['value'] : 'alt.'; ?></td>
             ]]></add>
 		</operation>
+		<!-- <operation>
+			<search position="replace"><![CDATA[<td class="text-right"><?php echo $column_action; ?></td>]]></search>
+			<add><![CDATA[
+			<td class="text-right">
+				<?php if ($sort == 'unit_type') { ?>
+					<a href="<?php echo $sort_value; ?>" class="<?php echo strtolower($order); ?>">Unit Type</a>
+				<?php } else { ?>
+					<a href="<?php echo $sort_value; ?>">Unit Type</a>
+				<?php } ?>
+			</td>
+            ]]></add>
+		</operation> -->
     </file>
 
 	<file path="/admin/language/en-gb/localisation/" name="weight_class.php">

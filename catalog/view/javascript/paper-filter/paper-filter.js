@@ -23,7 +23,7 @@ function addToCartMultiple() {
 
         				$('#cart > ul').load('index.php?route=common/cart/info ul li');
 
-                $('.qinput input[name="quantity[]"]').val('');
+                $('.qinput input[name="quantity[]"], .ainput input').val('');
 
                 setTimeout(function () {
         					$('.alert').fadeOut('slow');
@@ -538,36 +538,36 @@ function commonActs(){
                     aval = alt.val(),
                     qval = qnt.val();
 
-                hidden.val(uname);
+                // hidden.val(uname);
 
-                if (parent.hasClass('munit')) {
-                    hidden.attr('data-unit', uval);
+                if (parent.hasClass('aunit')) {
+                    // hidden.attr('data-unit', uval);
                     if (qval > 0 || aval > 0) {
-                        alt.val(parseFloat(qval * uval).toFixed(2));
+                        alt.val(parseFloat(qval / uval).toFixed(2));
                     }
 
-                    $.ajax({
-                		url: 'index.php?route=module/paper_filter/baseUnit',
-                		type: 'post',
-                		data: {bunit: uname}
-                    });
+                    // $.ajax({
+                	// 	url: 'index.php?route=module/paper_filter/baseUnit',
+                	// 	type: 'post',
+                	// 	data: {bunit: uname}
+                    // });
                 }
             });
 
             $('html').on('input', 'td.qinput input[type=text]', function(){
                 var alt = $(this).closest('tr').find('td.ainput input'),
-                    ratio = $(this).closest('tr').find('td.munit select').find(':selected').attr('data-val'),
+                    ratio = $(this).closest('tr').find('td.aunit select').find(':selected').attr('data-val'),
                     qval = $(this).val();
 
-                alt.val(qval > 0 ? parseFloat(qval * ratio).toFixed(2) : '');
+                alt.val(qval > 0 ? parseFloat(qval / ratio).toFixed(2) : '');
             });
 
             $('html').on('input', 'td.ainput input[type=text]', function(){
                 var qnt = $(this).closest('tr').find('td.qinput input[type=text]'),
-                    ratio = $(this).closest('tr').find('td.munit select').find(':selected').attr('data-val'),
+                    ratio = $(this).closest('tr').find('td.aunit select').find(':selected').attr('data-val'),
                     aval = $(this).val();
 
-                qnt.val(aval > 0 ? parseFloat(aval / ratio).toFixed(2) : '');
+                qnt.val(aval > 0 ? parseFloat(aval * ratio).toFixed(2) : '');
             });
 
             $('td select').trigger('change');

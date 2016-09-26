@@ -208,8 +208,9 @@
 .table-wrap .table > tbody > tr > .location {
     border-right: 1px solid #eee;
 }
-.table-wrap .table > tbody > tr > .stock {
-    padding-left: 6px;
+.table-wrap .table > tbody > tr > .stock, .table-wrap .table > tbody > tr > .unit {
+    border-left: 1px solid #eee;
+    padding: 1px 6px;
 }
 .table-wrap .table > tbody > tr > .model {
     padding: 1px;
