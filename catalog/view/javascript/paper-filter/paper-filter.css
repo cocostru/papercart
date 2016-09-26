@@ -209,7 +209,6 @@
     border-right: 1px solid #eee;
 }
 .table-wrap .table > tbody > tr > .stock, .table-wrap .table > tbody > tr > .unit {
-    border-left: 1px solid #eee;
     padding: 1px 6px;
 }
 .table-wrap .table > tbody > tr > .model {

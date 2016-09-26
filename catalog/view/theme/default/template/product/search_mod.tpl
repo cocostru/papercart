@@ -40,15 +40,15 @@
                                     <td width="6%" class="head-location"><small>Loc.</small></td>
                                     <td width="10%" class="head-stock"><small>Qty.</small></td>
                                     <td width="10%" class="head-price">
-                                        <small>Price</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Price for 1 stock unit"></i>
+                                        <small>Price</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Price of 1 (kg) stock unit"></i>
                                     </td>
-                                    <td width="3%" class="head-unit"></td>
                                     <td width="10%" class="head-qinput">
                                         <small>Req. qty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Required quantity in stock units"></i>
                                     </td>
-                                    <td width="3%" class="head-munit"><a>&#8644;</a></td>
+                                    <td width="3%" class="head-unit text-center"><small>Unit</small></td>
+                                    <!-- <td width="3%" class="head-munit"><a>&#8644;</a></td> -->
                                     <td width="10%" class="head-ainput text-center">
-                                        <small>Alt. qty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Auto-conversion"></i>
+                                        <small>Alt. qty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Quantity of package (alt.) units"></i>
                                     </td>
                                     <td width="5.5%" class="head-aunit"><small>Alt. unit</small></td>
                                 </tr>
@@ -106,13 +106,12 @@
                                             <a href="index.php?route=account/login"><small>sign in</small></a>
                                         <?php } ?>
                                     </td>
-                                    <td class="unit text-center"><small><?= $product['weight_unit'] ?></small></td>
                                     <td class="qinput">
                                         <input type="hidden" name="product_id[]" value="<?php echo $product['product_id']; ?>" />
                                         <input type="text" name="quantity[]" class="form-control input-sm" />
                                     </td>
-                                    <td class="munit">
-                                        <!-- <small><?= $product['weight_unit'] ?></small> -->
+                                    <td class="unit text-center"><small><?= $product['weight_unit'] ?></small></td>
+                                    <!-- <td class="munit">
                                         <?php if($product['base_unit'] && $product['alt_qty']): ?>
                                             <select name="option[<?= $product['base_unit']['product_option_id'] ?>]" id="input-option[<?= $product['base_unit']['product_option_id'] ?>]">
                                                 <?php foreach($product['base_unit']['product_option_value'] as $option_value): ?>
@@ -122,7 +121,7 @@
                                                 <?php endforeach; ?>
                                             </select>
                                         <?php endif; ?>
-                                    </td>
+                                    </td> -->
                                     <td class="ainput">
                                         <?php if($product['alt_qty']): ?>
                                             <input type="text" name="option[<?= $product['alt_qty']['product_option_id'] ?>]" class="form-control input-sm" />
@@ -132,7 +131,7 @@
                                         <?php if($product['alt_unit']): ?>
                                             <select name="option[<?= $product['alt_unit']['product_option_id'] ?>]" id="input-option[<?= $product['alt_unit']['product_option_id'] ?>]">
                                                 <?php foreach($product['alt_unit']['product_option_value'] as $option_value): ?>
-                                                        <option title="<?= $option_value['name'] ?>" value="<?php echo $option_value['product_option_value_id']; ?>">
+                                                        <option title="<?= 'Weight: ' . number_format($option_value['weight'], 2) . 'kg' ?>" value="<?php echo $option_value['product_option_value_id']; ?>"  data-val="<?= number_format($option_value['weight'], 2) ?>" <?= $product['gsm'] > 180 ? ($option_value['name'] == 'pkt' ? 'selected' : '') : ($option_value['name'] == 'ream' ? 'selected' : '') ?> >
                                                             &nbsp;<?= $option_value['name'] ?>
                                                         </option>
                                                 <?php endforeach; ?>
