@@ -191,7 +191,7 @@
                 <?php foreach($warehouses as $warehouse) { ?>
                     $('#warehouse').find('input[value=<?= $warehouse["warehouse_id"] ?>]').closest('tr').find('select[name*="zone"]').val('<?= $warehouse["warehouse_zone"] ?>');
                 <?php } ?>
-            }, 300);
+            }, 900);
 
             var warehouse_row = <?php echo $warehouse_row; ?>;
 
