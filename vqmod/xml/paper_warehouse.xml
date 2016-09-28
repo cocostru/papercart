@@ -129,9 +129,9 @@
                       <tr>
                         <td width="5%">Code</td>
                         <td width="15%">State</td>
-                        <td width="15%">Zone</td>
-                        <td width="15%">City</td>
-                        <td width="30%">Address</td>
+                        <td width="20%">Zone</td>
+                        <!-- <td>City</td> -->
+                        <td width="40%">Address</td>
                         <td width="15%">Person</td>
                         <td width="5%"></td>
                       </tr>
@@ -158,9 +158,9 @@
                                         <div class="text-danger"><?php echo $error_warehouse[$warehouse_row]; ?></div>
                                     <?php } ?>
                                 </td>
-                                <td class="text-right">
+                                <!-- <td class="text-right">
                                     <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_city]" value="<?php echo $warehouse['warehouse_city']; ?>" class="form-control" />
-                                </td>
+                                </td> -->
                                 <td class="text-right">
                                     <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_address]" value="<?php echo $warehouse['warehouse_address']; ?>" class="form-control" />
                                 </td>
@@ -178,7 +178,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="6"></td>
+                            <td colspan="5"></td>
                             <td class="text-left"><button type="button" onclick="addWarehouse();" data-toggle="tooltip" title="" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
                         </tr>
                     </tfoot>
@@ -198,64 +198,68 @@
             </style>
 
             <script type="text/javascript"><!--
-            $('html').on('change', 'select[name*="state"]', function(){
-                $(this).closest('tr').find('select[name*="zone"]').load('index.php?route=catalog/vendor/zone&token=<?= $token ?>&country_id=' + this.value);
-            });
+                $('html').on('change', 'select[name*="state"]', function(){
+                    var tr = $(this).closest('tr');
+                    tr.find('select[name*="zone"]').load('index.php?route=catalog/vendor/zone&token=<?= $token ?>&country_id=' + this.value);
+                    setTimeout(function(){
+                        tr.find('input[name*="code"]').val(tr.find('select[name*="zone"] :selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
+                    }, 300);
+                });
 
-            $('html').on('change', 'select[name*="zone"]', function(){
-                $(this).closest('tr').find('input[name*="code"]').val($(this).find(':selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
-            });
+                $('html').on('change', 'select[name*="zone"]', function(){
+                    $(this).closest('tr').find('input[name*="code"]').val($(this).find(':selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
+                });
 
-            $('select[name*="state"]').trigger('change');
+                $('select[name*="state"]').trigger('change');
 
-            setTimeout(function(){
-                <?php foreach($warehouses as $warehouse) { ?>
-                    var tr = $('#warehouse').find('input[value=<?= $warehouse["warehouse_id"] ?>]').closest('tr');
-                    tr.find('select[name*="zone"]').val('<?= $warehouse["warehouse_zone"] ?>');
-                    tr.find('input[name*="code"]').val(tr.find('select[name*="zone"] :selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
-                <?php } ?>
-            }, 900);
+                setTimeout(function(){
+                    <?php foreach($warehouses as $warehouse) { ?>
+                        var tr = $('#warehouse').find('input[value=<?= $warehouse["warehouse_id"] ?>]').closest('tr');
+                        tr.find('select[name*="zone"]').val('<?= $warehouse["warehouse_zone"] ?>');
+                        tr.find('input[name*="code"]').val(tr.find('select[name*="zone"] :selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
+                    <?php } ?>
+                }, 900);
 
-            var warehouse_row = <?php echo $warehouse_row; ?>;
+                var warehouse_row = <?php echo $warehouse_row; ?>;
 
-            function addWarehouse() {
-                html  = '<tr id="warehouse-row' + warehouse_row + '">';
-                html += '<td class="text-right">';
-                html += '<input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_code]; ?>]" value="<?php echo $warehouse['warehouse_code']; ?>" class="wh-code" readonly />';
-                html += '</td>';
-                html += '<td class="text-left">';
-                html += '<input type="hidden" name="warehouse[' + warehouse_row + '][warehouse_id]" value="" />';
-                html += '<select name="warehouse[' + warehouse_row + '][warehouse_state]" class="form-control">';
-                html += '<option value=""><?= $text_select ?></option>';
-                <?php foreach ($countries as $country) { ?>
-                html += '<option value="<?= $country['country_id'] ?>"><?= $country['name'] ?></option>';
-                <?php } ?>
-                html += '</select>';
-                html += '</td>';
-                html += '<td class="text-right">';
-                html += '<input type="hidden" name="warehouse[' + warehouse_row + '][warehouse_code]; ?>]" value="" />';
-                html += '<select name="warehouse[' + warehouse_row + '][warehouse_zone]" class="form-control"></select>';
-                html += '</td>';
-                html += '<td class="text-right">';
-                html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_city]" value="" class="form-control" />';
-                html += '</td>';
-                html += '<td class="text-right">';
-                html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_address]" value="" class="form-control" />';
-                html += '</td>';
-                html += '<td class="text-right">';
-                html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_person]" value="" class="form-control" />';
-                html += '</td>';
-                html += '<td class="text-left">';
-                html += '<button type="button" onclick="$(\'#warehouse-row' + warehouse_row + '\').remove();" data-toggle="tooltip" title="" class="btn btn-danger">';
-                html += '<i class="fa fa-minus-circle"></i>';
-                html += '</button>';
-                html += '</td>';
-                html += '</tr>';
+                function addWarehouse() {
+                    html  = '<tr id="warehouse-row' + warehouse_row + '">';
+                    html += '<td class="text-right">';
+                    html += '<input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_code]; ?>]" value="" class="wh-code" readonly />';
+                    html += '</td>';
+                    html += '<td class="text-left">';
+                    html += '<input type="hidden" name="warehouse[' + warehouse_row + '][warehouse_id]" value="" />';
+                    html += '<select name="warehouse[' + warehouse_row + '][warehouse_state]" class="form-control">';
+                    html += '<option value=""><?= $text_select ?></option>';
+                    <?php foreach ($countries as $country) { ?>
+                    html += '<option value="<?= $country['country_id'] ?>"><?= $country['name'] ?></option>';
+                    <?php } ?>
+                    html += '</select>';
+                    html += '</td>';
+                    html += '<td class="text-right">';
+                    html += '<input type="hidden" name="warehouse[' + warehouse_row + '][warehouse_code]; ?>]" value="" />';
+                    html += '<select name="warehouse[' + warehouse_row + '][warehouse_zone]" class="form-control"></select>';
+                    html += '</td>';
+                    <!-- html += '<td class="text-right">'; -->
+                    <!-- html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_city]" value="" class="form-control" />'; -->
+                    <!-- html += '</td>'; -->
+                    html += '<td class="text-right">';
+                    html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_address]" value="" class="form-control" />';
+                    html += '</td>';
+                    html += '<td class="text-right">';
+                    html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_person]" value="" class="form-control" />';
+                    html += '</td>';
+                    html += '<td class="text-left">';
+                    html += '<button type="button" onclick="$(\'#warehouse-row' + warehouse_row + '\').remove();" data-toggle="tooltip" title="" class="btn btn-danger">';
+                    html += '<i class="fa fa-minus-circle"></i>';
+                    html += '</button>';
+                    html += '</td>';
+                    html += '</tr>';
 
-            	$('#warehouse tbody').append(html);
+                	$('#warehouse tbody').append(html);
 
-            	warehouse_row++;
-            }
+                	warehouse_row++;
+                }
             //--></script></div>
             ]]></add>
 		</operation>
