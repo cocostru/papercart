@@ -202,6 +202,10 @@
                 $(this).closest('tr').find('select[name*="zone"]').load('index.php?route=catalog/vendor/zone&token=<?= $token ?>&country_id=' + this.value);
             });
 
+            $('html').on('change', 'select[name*="zone"]', function(){
+                $(this).closest('tr').find('input[name*="code"]').val($(this).find(':selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
+            });
+
             $('select[name*="state"]').trigger('change');
 
             setTimeout(function(){
