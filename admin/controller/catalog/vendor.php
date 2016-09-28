@@ -21,13 +21,13 @@ class ControllerCatalogVendor extends Controller {
 
     	if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->model_catalog_vendor->addVendor($this->request->post);
-			
+
 			if (!empty($this->request->post['username'])) {
 				$username = $this->request->post['username'];
 			} else {
 				$username =  $this->request->post['username1'];
 			}
-			
+
 			if (!file_exists(rtrim(DIR_IMAGE . 'catalog/', '/') . '/' . str_replace('../', '', $username)) && (isset($this->request->post['generate_path']))) {
 				mkdir(rtrim(DIR_IMAGE . 'catalog/', '/') . '/' . str_replace('../', '', $username), 0777);
 			}
@@ -132,7 +132,7 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$page = 1;
 		}
-		
+
 		if (isset($this->request->get['filter_status'])) {
 			$filter_status = $this->request->get['filter_status'];
 		} else {
@@ -144,7 +144,7 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$sort = 'v.vendor_name';
 		}
-		
+
 		if (isset($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
@@ -164,7 +164,7 @@ class ControllerCatalogVendor extends Controller {
 		if (isset($this->request->get['order'])) {
 			$url .= '&order=' . $this->request->get['order'];
 		}
-		
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -190,25 +190,25 @@ class ControllerCatalogVendor extends Controller {
 		);
 
 		$this->load->model('tool/image');
-		
+
 		$vendors_total = $this->model_catalog_vendor->getTotalVendors($filter_data);  //count vendor per page
 		$results = $this->model_catalog_vendor->getVendors($filter_data); //get total vendor name
-		
+
 		$this->load->model('catalog/commission');
 		$data['commissions'] = $this->model_catalog_commission->getCommissions();
-		
+
 		foreach ($results as $result) {
-			
+
 			if ($result['vendor_image'] && file_exists(DIR_IMAGE . $result['vendor_image'])) {
 				$image = $this->model_tool_image->resize($result['vendor_image'], 120, 45);
 			} else {
 				$image = $this->model_tool_image->resize('no_image.jpg', 120, 45);
 			}
-		
+
 			$total_products = $this->model_catalog_vendor->getTotalVendorsByVendorId($result['vendor_id']);
-			
+
 			switch ($result['commission_type']) {
-				case '0': 
+				case '0':
 					$commission = $this->language->get('text_percentage') . ' (' . $result['commission'] . '%)';
 					break;
 				case '1':
@@ -218,7 +218,7 @@ class ControllerCatalogVendor extends Controller {
 					$commission_type = $this->language->get('text_pf');
 					if (!strpos($result['commission'], ':') === false) {
 						$dc = explode(':',$result['commission']);
-						$commission = $this->language->get('text_pf') . ' (' . $dc[0] . '% + ' . $dc[1] . ')'; 
+						$commission = $this->language->get('text_pf') . ' (' . $dc[0] . '% + ' . $dc[1] . ')';
 					} else {
 						$commission = $this->language->get('text_pf') . '(' . $result['commission'] . '%)';
 					}
@@ -226,7 +226,7 @@ class ControllerCatalogVendor extends Controller {
 				case '3':
 					if (!strpos($result['commission'], ':') === false) {
 						$dc = explode(':',$result['commission']);
-						$commission = $this->language->get('text_fp') . ' (' . $dc[0] . ' + ' . $dc[1] . '%)'; 
+						$commission = $this->language->get('text_fp') . ' (' . $dc[0] . ' + ' . $dc[1] . '%)';
 					} else {
 						$commission = $this->language->get('text_fp') . '(' . $result['commission'] . ')';
 					}
@@ -237,11 +237,11 @@ class ControllerCatalogVendor extends Controller {
 				case '5':
 					$commission = $result['commission_name'] . ' (' . $this->currency->format($result['commission'], $this->config->get('config_currency')) . ')';
 					break;
-				default: 
+				default:
 					$commission = '';
 					break;
 			}
-			
+
 			if ($result['status'] == 5) {
 				$status = $this->language->get('txt_pending_approval');
 			} elseif ($result['status'] == 1) {
@@ -249,7 +249,7 @@ class ControllerCatalogVendor extends Controller {
 			} else {
 				$status = $this->language->get('txt_disabled_approval');
 			}
-			
+
 			$data['vendors'][] = array(
 				'vendor_id' 		=> $result['vendor_id'],
 				'vendor_name'    	=> $result['vendor_name'],
@@ -266,7 +266,7 @@ class ControllerCatalogVendor extends Controller {
     	}
 
 		$data['heading_title'] = $this->language->get('heading_title');
-		
+
 		$data['text_list'] = $this->language->get('text_list');
 		$data['text_enabled'] = $this->language->get('text_enabled');
 		$data['text_disabled'] = $this->language->get('text_disabled');
@@ -307,7 +307,7 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['success'] = '';
 		}
-		
+
 		if (isset($this->request->get['filter_vendor_name'])) {
 			$filter_vendor_name = $this->request->get['filter_vendor_name'];
 		} else {
@@ -328,7 +328,7 @@ class ControllerCatalogVendor extends Controller {
 
 		if (isset($this->request->get['filter_sort_order'])) {
 			$url .= '&filter_sort_order=' . $this->request->get['filter_sort_order'];
-		} 
+		}
 
 		if ($order == 'ASC') {
 			$url .= '&order=DESC';
@@ -364,10 +364,10 @@ class ControllerCatalogVendor extends Controller {
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($vendors_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($vendors_total - $this->config->get('config_limit_admin'))) ? $vendors_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $vendors_total, ceil($vendors_total / $this->config->get('config_limit_admin')));
 
 		$data['filter_vendor_name'] = $filter_vendor_name;
-			
+
 		$data['sort'] = $sort;
 		$data['order'] = $order;
-		
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -377,7 +377,7 @@ class ControllerCatalogVendor extends Controller {
 
   	private function getForm() {
     	$data['heading_title'] = $this->language->get('heading_title');
-		
+
 		$data['text_form'] = !isset($this->request->get['vendor_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
     	$data['text_enabled'] = $this->language->get('text_enabled');
     	$data['text_disabled'] = $this->language->get('text_disabled');
@@ -402,7 +402,7 @@ class ControllerCatalogVendor extends Controller {
 		$data['txt_end_date'] = $this->language->get('txt_end_date');
 		$data['text_browse'] = $this->language->get('text_browse');
 		$data['text_clear'] = $this->language->get('text_clear');
-		
+
 		$data['entry_username1'] = $this->language->get('entry_username1');
 		$data['entry_vendor_name'] = $this->language->get('entry_vendor_name');
 		$data['entry_user_account'] = $this->language->get('entry_user_account');
@@ -445,7 +445,7 @@ class ControllerCatalogVendor extends Controller {
 		$data['entry_user_group'] = $this->language->get('entry_user_group');
 		$data['entry_password'] = $this->language->get('entry_password');
 		$data['entry_confirm'] = $this->language->get('entry_confirm');
-		
+
 		$data['tab_general'] = $this->language->get('tab_general');
 		$data['tab_finance'] = $this->language->get('tab_finance');
 		$data['tab_commission'] = $this->language->get('tab_commission');
@@ -453,7 +453,7 @@ class ControllerCatalogVendor extends Controller {
 		$data['tab_shipping'] = $this->language->get('tab_shipping');
 		$data['tab_address'] = $this->language->get('tab_address');
 		$data['tab_setting'] = $this->language->get('tab_setting');
-		
+
 		$data['help_user_account'] = $this->language->get('help_user_account');
 		$data['help_username1'] = $this->language->get('help_username1');
 		$data['help_commission'] = $this->language->get('help_commission');
@@ -463,30 +463,30 @@ class ControllerCatalogVendor extends Controller {
 		$data['help_image'] = $this->language->get('help_image');
 		$data['help_folder_path'] = $this->language->get('help_folder_path');
 		$data['help_folder_delete'] = $this->language->get('help_folder_delete');
-		$data['help_folder_path_remove'] = $this->language->get('help_folder_path_remove');	
+		$data['help_folder_path_remove'] = $this->language->get('help_folder_path_remove');
 		$data['help_map_vendor_profile'] = $this->language->get('help_map_vendor_profile');
 
     	$data['button_save'] = $this->language->get('button_save');
     	$data['button_cancel'] = $this->language->get('button_cancel');
-		
+
 		$data['add_profile'] = false;
-		
+
 		if (!isset($this->request->get['vendor_id'])) {
 			$data['add_profile'] = true;
 		}
-		
+
  		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
 			$data['error_warning'] = '';
 		}
-		
+
 		if (isset($this->error['username1'])) {
 			$data['error_username1'] = $this->error['username1'];
 		} else {
 			$data['error_username1'] = '';
 		}
-		
+
 		if (isset($this->error['vendor_name'])) {
 			$data['error_vendor_name'] = $this->error['vendor_name'];
 		} else {
@@ -498,49 +498,49 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['error_vendor_email'] = '';
 		}
-		
+
 		if (isset($this->error['paypal_email'])) {
 			$data['error_vendor_paypal_email'] = $this->error['paypal_email'];
 		} else {
 			$data['error_vendor_paypal_email'] = '';
 		}
-		
+
 		if (isset($this->error['firstname'])) {
 			$data['error_vendor_firstname'] = $this->error['firstname'];
 		} else {
 			$data['error_vendor_firstname'] = '';
-		}	
-		
+		}
+
 		if (isset($this->error['lastname'])) {
 			$data['error_vendor_lastname'] = $this->error['lastname'];
 		} else {
 			$data['error_vendor_lastname'] = '';
-		}		
-	
+		}
+
 		if (isset($this->error['telephone'])) {
 			$data['error_vendor_telephone'] = $this->error['telephone'];
 		} else {
 			$data['error_vendor_telephone'] = '';
 		}
-		
+
   		if (isset($this->error['address_1'])) {
 			$data['error_vendor_address_1'] = $this->error['address_1'];
 		} else {
 			$data['error_vendor_address_1'] = '';
 		}
-   		
+
 		if (isset($this->error['city'])) {
 			$data['error_vendor_city'] = $this->error['city'];
 		} else {
 			$data['error_vendor_city'] = '';
 		}
-		
+
 		if (isset($this->error['postcode'])) {
 			$data['error_vendor_postcode'] = $this->error['postcode'];
 		} else {
 			$data['error_vendor_postcode'] = '';
 		}
-		
+
 		if (isset($this->error['country'])) {
 			$data['error_vendor_country'] = $this->error['country'];
 		} else {
@@ -552,7 +552,7 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['error_vendor_zone'] = '';
 		}
-		
+
 		if (isset($this->error['password'])) {
 			$data['error_password'] = $this->error['password'];
 		} else {
@@ -564,13 +564,13 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['error_confirm'] = '';
 		}
-		
+
 		if (isset($this->error['link_account'])) {
 			$data['error_link_account'] = $this->error['link_account'];
 		} else {
 			$data['error_link_account'] = '';
 		}
-		
+
 		if (isset($this->error['account_validate'])) {
 			$data['error_account_validate'] = $this->error['account_validate'];
 		} else {
@@ -622,16 +622,16 @@ class ControllerCatalogVendor extends Controller {
 		$data['cancel'] = $this->url->link('catalog/vendor', 'token=' . $this->session->data['token'] . $url, true);
 
 		$data['token'] = $this->session->data['token'];
-		
+
 		$this->load->model('user/user');
-		
+
 		if (isset($this->request->get['vendor_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
       		$vendors_info = $this->model_catalog_vendor->getVendor($this->request->get['vendor_id']);
 			$user_info = $this->model_user_user->getUser($vendors_info['user_id']);
     	}
-		
+
 		$data['user_accounts'] = $this->model_user_user->getUsers();
-		
+
 		if (isset($this->request->post['password'])) {
 			$data['password'] = $this->request->post['password'];
 		} else {
@@ -643,44 +643,44 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['confirm'] = '';
 		}
-		
+
 		if (isset($this->request->post['user_id'])) {
       		$data['user_id'] = $this->request->post['user_id'];
     	} elseif (isset($vendors_info)) {
 			$data['user_id'] = $vendors_info['user_id'];
-		} else {	
+		} else {
       		$data['user_id'] = '';
     	}
-		
+
 		if (isset($this->request->post['user_id_1'])) {
       		$data['user_id_1'] = $this->request->post['user_id_1'];
 		} elseif (isset($vendors_info)) {
 			$data['user_id_1'] = $vendors_info['user_id'];
-		} else {	
+		} else {
       		$data['user_id_1'] = '';
     	}
-		
+
 		if (isset($this->request->post['vendor_name'])) {
       		$data['vendor_name'] = $this->request->post['vendor_name'];
     	} elseif (isset($vendors_info)) {
 			$data['vendor_name'] = $vendors_info['vendor_name'];
-		} else {	
+		} else {
       		$data['vendor_name'] = '';
     	}
-		
+
 		if (isset($this->request->post['company'])) {
       		$data['company'] = $this->request->post['company'];
     	} elseif (isset($vendors_info)) {
 			$data['company'] = $vendors_info['company'];
-		} else {	
+		} else {
       		$data['company'] = '';
     	}
-		
+
 		if (isset($this->request->post['firstname'])) {
       		$data['firstname'] = $this->request->post['firstname'];
     	} elseif (isset($vendors_info)) {
 			$data['firstname'] = $vendors_info['firstname'];
-		} else {	
+		} else {
       		$data['firstname'] = '';
     	}
 
@@ -688,23 +688,23 @@ class ControllerCatalogVendor extends Controller {
       		$data['lastname'] = $this->request->post['lastname'];
     	} elseif (isset($vendors_info)) {
 			$data['lastname'] = $vendors_info['lastname'];
-		} else {	
+		} else {
       		$data['lastname'] = '';
     	}
-		
+
 		if (isset($this->request->post['telephone'])) {
       		$data['telephone'] = $this->request->post['telephone'];
     	} elseif (isset($vendors_info)) {
 			$data['telephone'] = $vendors_info['telephone'];
-		} else {	
+		} else {
       		$data['telephone'] = '';
     	}
-		
+
 		if (isset($this->request->post['commission'])) {
       		$data['commission'] = $this->request->post['commission'];
     	} elseif (isset($vendors_info)) {
 			$data['commission'] = $vendors_info['commission_id'];
-		} else {	
+		} else {
       		$data['commission'] = '';
     	}
 		/*add*/
@@ -712,7 +712,7 @@ class ControllerCatalogVendor extends Controller {
       		$data['product_limit'] = $this->request->post['product_limit'];
     	} elseif (isset($vendors_info)) {
 			$data['product_limit'] = $vendors_info['product_limit_id'];
-		} else {	
+		} else {
       		$data['product_limit'] = '';
     	}
 		/*add*/
@@ -720,165 +720,165 @@ class ControllerCatalogVendor extends Controller {
       		$data['fax'] = $this->request->post['fax'];
     	} elseif (isset($vendors_info)) {
 			$data['fax'] = $vendors_info['fax'];
-		} else {	
+		} else {
       		$data['fax'] = '';
     	}
-		
+
 		if (isset($this->request->post['email'])) {
       		$data['email'] = $this->request->post['email'];
     	} elseif (isset($vendors_info)) {
 			$data['email'] = $vendors_info['email'];
-		} else {	
+		} else {
       		$data['email'] = '';
     	}
-		
+
 		if (isset($this->request->post['paypal_email'])) {
       		$data['paypal_email'] = $this->request->post['paypal_email'];
     	} elseif (isset($vendors_info)) {
 			$data['paypal_email'] = $vendors_info['paypal_email'];
-		} else {	
+		} else {
       		$data['paypal_email'] = '';
     	}
-		
+
 		if (isset($this->request->post['company_id'])) {
       		$data['company_id'] = $this->request->post['company_id'];
     	} elseif (isset($vendors_info)) {
 			$data['company_id'] = $vendors_info['company_id'];
-		} else {	
+		} else {
       		$data['company_id'] = '';
     	}
-		
+
 		if (isset($this->request->post['iban'])) {
       		$data['iban'] = $this->request->post['iban'];
     	} elseif (isset($vendors_info)) {
 			$data['iban'] = $vendors_info['iban'];
-		} else {	
+		} else {
       		$data['iban'] = '';
     	}
-		
+
 		if (isset($this->request->post['bank_name'])) {
       		$data['bank_name'] = $this->request->post['bank_name'];
     	} elseif (isset($vendors_info)) {
 			$data['bank_name'] = $vendors_info['bank_name'];
-		} else {	
+		} else {
       		$data['bank_name'] = '';
     	}
-		
+
 		if (isset($this->request->post['bank_address'])) {
       		$data['bank_address'] = $this->request->post['bank_address'];
     	} elseif (isset($vendors_info)) {
 			$data['bank_address'] = $vendors_info['bank_address'];
-		} else {	
+		} else {
       		$data['bank_address'] = '';
     	}
-		
+
 		if (isset($this->request->post['swift_bic'])) {
       		$data['swift_bic'] = $this->request->post['swift_bic'];
     	} elseif (isset($vendors_info)) {
 			$data['swift_bic'] = $vendors_info['swift_bic'];
-		} else {	
+		} else {
       		$data['swift_bic'] = '';
     	}
-		
+
 		if (isset($this->request->post['tax_id'])) {
       		$data['tax_id'] = $this->request->post['tax_id'];
     	} elseif (isset($vendors_info)) {
 			$data['tax_id'] = $vendors_info['tax_id'];
-		} else {	
+		} else {
       		$data['tax_id'] = '';
     	}
-		
+
 		if (isset($this->request->post['accept_paypal'])) {
       		$data['accept_paypal'] = $this->request->post['accept_paypal'];
     	} elseif (isset($vendors_info)) {
 			$data['accept_paypal'] = $vendors_info['accept_paypal'];
-		} else {	
+		} else {
       		$data['accept_paypal'] = '';
     	}
-		
+
 		if (isset($this->request->post['accept_cheques'])) {
       		$data['accept_cheques'] = $this->request->post['accept_cheques'];
     	} elseif (isset($vendors_info)) {
 			$data['accept_cheques'] = $vendors_info['accept_cheques'];
-		} else {	
+		} else {
       		$data['accept_cheques'] = '';
     	}
-		
+
 		if (isset($this->request->post['accept_bank_transfer'])) {
       		$data['accept_bank_transfer'] = $this->request->post['accept_bank_transfer'];
     	} elseif (isset($vendors_info)) {
 			$data['accept_bank_transfer'] = $vendors_info['accept_bank_transfer'];
-		} else {	
+		} else {
       		$data['accept_bank_transfer'] = '';
     	}
-		
+
 		if (isset($this->request->post['address_1'])) {
       		$data['address_1'] = $this->request->post['address_1'];
     	} elseif (isset($vendors_info)) {
 			$data['address_1'] = $vendors_info['address_1'];
-		} else {	
+		} else {
       		$data['address_1'] = '';
     	}
-		
+
 		if (isset($this->request->post['address_2'])) {
       		$data['address_2'] = $this->request->post['address_2'];
     	} elseif (isset($vendors_info)) {
 			$data['address_2'] = $vendors_info['address_2'];
-		} else {	
+		} else {
       		$data['address_2'] = '';
     	}
-		
+
 		if (isset($this->request->post['city'])) {
       		$data['city'] = $this->request->post['city'];
     	} elseif (isset($vendors_info)) {
 			$data['city'] = $vendors_info['city'];
-		} else {	
+		} else {
       		$data['city'] = '';
     	}
-		
+
 		if (isset($this->request->post['postcode'])) {
       		$data['postcode'] = $this->request->post['postcode'];
     	} elseif (isset($vendors_info)) {
 			$data['postcode'] = $vendors_info['postcode'];
-		} else {	
+		} else {
       		$data['postcode'] = '';
     	}
-		
+
 		$this->load->model('localisation/country');
 	   	$data['countries'] = $this->model_localisation_country->getCountries();
-		
+
 		if (isset($this->request->post['country_id'])) {
       		$data['country_id'] = $this->request->post['country_id'];
     	} elseif (isset($vendors_info)) {
 			$data['country_id'] = $vendors_info['country_id'];
-		} else {	
+		} else {
       		$data['country_id'] = '';
     	}
-		
+
 	   	if (isset($this->request->post['zone_id'])) {
       		$data['zone_id'] = $this->request->post['zone_id'];
     	} elseif (isset($vendors_info)) {
 			$data['zone_id'] = $vendors_info['zone_id'];
-		} else {	
+		} else {
       		$data['zone_id'] = '';
     	}
-		
+
 		if (isset($this->request->post['vendor_description'])) {
       		$data['vendor_description'] = $this->request->post['vendor_description'];
     	} elseif (isset($vendors_info)) {
 			$data['vendor_description'] = $vendors_info['vendor_description'];
-		} else {	
+		} else {
       		$data['vendor_description'] = '';
     	}
-		
+
 		if (isset($this->request->post['store_url'])) {
       		$data['store_url'] = $this->request->post['store_url'];
     	} elseif (isset($vendors_info)) {
 			$data['store_url'] = $vendors_info['store_url'];
-		} else {	
+		} else {
       		$data['store_url'] = '';
     	}
-		
+
 		if (isset($this->request->post['vendor_image'])) {
 			$data['vendor_image'] = $this->request->post['vendor_image'];
 		} elseif (isset($vendors_info)) {
@@ -886,63 +886,63 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['vendor_image'] = '';
 		}
-	
+
 		if (isset($this->request->post['sort_order'])) {
       		$data['sort_order'] = $this->request->post['sort_order'];
     	} elseif (isset($vendors_info)) {
 			$data['sort_order'] = $vendors_info['sort_order'];
-		} else {	
+		} else {
       		$data['sort_order'] = '';
     	}
-		
+
 		if ($this->config->get('mvd_store_activated')) {
 			$data['mvd_store_activated'] = true;
 		} else {
 			$data['mvd_store_activated'] = false;
 		}
-		
+
 		$data['commissions'] = $this->model_catalog_vendor->getCommissionLimits();
-		
+
 		$this->load->model('catalog/prolimit');
 		$data['prolimits'] = $this->model_catalog_prolimit->getLimits();
-		
+
 		//user setting start
 		$data['vendor_List'] = $this->model_catalog_vendor->getVendorsList();
-			
+
 		$this->load->model('catalog/category');
 		$data['categories'] = $this->model_catalog_category->getCategories(0);
-			
-		$this->load->model('setting/store');		
+
+		$this->load->model('setting/store');
 		$data['stores'] = $this->model_setting_store->getStores();
-			
+
 		if (isset($this->request->post['vendor_product'])) {
 			$data['vendor_product'] = $this->request->post['vendor_product'];
 		} elseif (!empty($user_info)) {
 			$data['vendor_product'] = $user_info['vendor_permission'];
-		} else { 
+		} else {
 			$data['vendor_product'] = '';
 		}
-			
+
 		if (isset($user_info['cat_permission'])) {
 			$cat_permission = unserialize($user_info['cat_permission']);
 		} else {
 			$cat_permission = '';
-		}		
-			
+		}
+
 		if (isset($this->request->post['vendor_category'])) {
 			$data['vendor_category'] = $this->request->post['vendor_category'];
 		} elseif (isset($cat_permission)) {
 			$data['vendor_category'] = $cat_permission;
-		} else { 
+		} else {
 			$data['vendor_category'] = array();
 		}
-			
+
 		if (isset($user_info['store_permission'])) {
 			$store_permission = unserialize($user_info['store_permission']);
 		} else {
 			$store_permission = '';
 		}
-			
+
 		if (isset($this->request->post['product_store'])) {
 			$data['product_store'] = $this->request->post['product_store'];
 		} elseif (isset($store_permission)) {
@@ -950,13 +950,13 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['product_store'] = array();
 		}
-			
+
 		if (isset($user_info['folder']) && !empty($user_info['folder'])) {
 			$data['folder_path'] = $user_info['folder'];
 		} else {
 			$data['folder_path'] = false;
 		}
-			
+
 		if (isset($this->request->post['user_date_start'])) {
 			$data['user_date_start'] = $this->request->post['user_date_start'];
 		} elseif (!empty($user_info['user_date_start'])) {
@@ -964,7 +964,7 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['user_date_start'] = '';
 		}
-			
+
 		if (isset($this->request->post['user_date_end'])) {
 			$data['user_date_end'] = $this->request->post['user_date_end'];
 		} elseif (!empty($user_info['user_date_end'])) {
@@ -972,10 +972,10 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['user_date_end'] = '';
 		}
-		
+
 		$this->load->model('user/user_group');
 		$data['user_groups'] = $this->model_user_user_group->getUserGroups();
-		
+
 		if (isset($this->request->post['user_group_id'])) {
 			$data['user_group_id'] = $this->request->post['user_group_id'];
 		} elseif (!empty($user_info)) {
@@ -983,7 +983,7 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['user_group_id'] = '50';
 		}
-		
+
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];
 		} elseif (!empty($user_info)) {
@@ -993,9 +993,9 @@ class ControllerCatalogVendor extends Controller {
 		}
 		//user setting end
 
-		
+
 		$this->load->model('tool/image');
-		
+
 		if (isset($this->request->post['vendor_image']) && is_file(DIR_IMAGE . $this->request->post['vendor_image'])) {
 			$data['thumb'] = $this->model_tool_image->resize($this->request->post['vendor_image'], 100, 100);
 		} elseif (!empty($vendors_info) && is_file(DIR_IMAGE . $vendors_info['vendor_image'])) {
@@ -1003,10 +1003,10 @@ class ControllerCatalogVendor extends Controller {
 		} else {
 			$data['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
 		}
-		
-		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);	
+
+		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
 		$data['no_image'] = $this->model_tool_image->resize('no_image.jpg', 100, 100);
-		
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -1022,7 +1022,7 @@ class ControllerCatalogVendor extends Controller {
     	if ((utf8_strlen($this->request->post['vendor_name']) < 3) || (utf8_strlen($this->request->post['vendor_name']) > 64)) {
       		$this->error['vendor_name'] = $this->language->get('error_vendor_name');
     	}
-		
+
 		if ((utf8_strlen($this->request->post['firstname']) < 1) || (utf8_strlen($this->request->post['firstname']) > 32)) {
       		$this->error['firstname'] = $this->language->get('error_vendor_firstname');
     	}
@@ -1030,17 +1030,17 @@ class ControllerCatalogVendor extends Controller {
     	if ((utf8_strlen($this->request->post['lastname']) < 1) || (utf8_strlen($this->request->post['lastname']) > 32)) {
       		$this->error['lastname'] = $this->language->get('error_vendor_lastname');
     	}
-		
+
 		if ((utf8_strlen($this->request->post['email']) > 96) || !preg_match('/^[^\@]+@.*\.[a-z]{2,6}$/i', $this->request->post['email'])) {
       		$this->error['email'] = $this->language->get('error_vendor_email');
     	}
-		
+
 		if (utf8_strlen($this->request->post['paypal_email']) > 0) {
 			if ((utf8_strlen($this->request->post['paypal_email']) > 96) || !preg_match('/^[^\@]+@.*\.[a-z]{2,6}$/i', $this->request->post['paypal_email'])) {
 				$this->error['paypal_email'] = $this->language->get('error_vendor_paypal_email');
 			}
 		}
-		
+
 		if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
       		$this->error['telephone'] = $this->language->get('error_vendor_telephone');
     	}
@@ -1055,27 +1055,27 @@ class ControllerCatalogVendor extends Controller {
 
 		$this->load->model('localisation/country');
 		$country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
-		
+
 		if ($country_info && $country_info['postcode_required'] && (utf8_strlen($this->request->post['postcode']) < 2) || (utf8_strlen($this->request->post['postcode']) > 10)) {
 			$this->error['postcode'] = $this->language->get('error_vendor_postcode');
 		}
-		
+
     	if ($this->request->post['country_id'] == '') {
       		$this->error['country'] = $this->language->get('error_vendor_country');
     	}
-		
+
     	if ($this->request->post['zone_id'] == '') {
       		$this->error['zone'] = $this->language->get('error_vendor_zone');
     	}
 
 		if (!isset($this->request->post['user_id']) || $this->request->post['user_id'] == 1) {
 			$this->error['link_account'] = $this->language->get('error_link_account2');
-			
+
 			if ($this->request->post['user_id'] == 1) {
 				$this->error['link_account'] = $this->language->get('error_link_account');
 			}
 		}
-		
+
 		if ($this->request->post['password']) {
 			if ((utf8_strlen($this->request->post['password']) < 4) || (utf8_strlen($this->request->post['password']) > 20)) {
 				$this->error['password'] = $this->language->get('error_password');
@@ -1085,21 +1085,21 @@ class ControllerCatalogVendor extends Controller {
 				$this->error['confirm'] = $this->language->get('error_confirm');
 			}
 		}
-		
-		//add profile start	
-		if (empty($this->request->post['user_id']) && (utf8_strlen($this->request->post['username1']) > 1)) {			
+
+		//add profile start
+		if (empty($this->request->post['user_id']) && (utf8_strlen($this->request->post['username1']) > 1)) {
 			if ((utf8_strlen($this->request->post['username1']) < 3) || (utf8_strlen($this->request->post['username1']) > 20)) {
 				$this->error['warning'] = $this->language->get('error_username1');
 			}
-			
+
 			$this->load->model('user/user');
 			$user_info = $this->model_user_user->getUserByUsername($this->request->post['username1']);
 
 			if ($user_info) {
 				$this->error['warning'] = $this->language->get('error_username_exists');
 			}
-			
-				
+
+
 			if ((utf8_strlen($this->request->post['password']) < 1) || (utf8_strlen($this->request->post['confirm']) < 1)) {
 				$this->error['password'] = $this->language->get('error_password');
 			} else {
@@ -1113,17 +1113,17 @@ class ControllerCatalogVendor extends Controller {
 					}
 				}
 			}
-			
-		} elseif (!empty($this->request->post['user_id']) && (utf8_strlen($this->request->post['username1']) < 1)) {	
+
+		} elseif (!empty($this->request->post['user_id']) && (utf8_strlen($this->request->post['username1']) < 1)) {
 			$this->load->model('catalog/vendor');
 			$mapping_info = $this->model_catalog_vendor->ValidateUserMapping($this->request->post['user_id']);
-			
+
 			if ($this->request->post['user_id_1'] != $this->request->post['user_id']) {
 				if ($mapping_info > 0) {
 					$this->error['warning'] = $this->language->get('error_mapping_validation');
 				}
 			}
-			
+
 		} else {
 			$this->error['warning'] = $this->language->get('error_account_validate');
 		}
@@ -1143,56 +1143,56 @@ class ControllerCatalogVendor extends Controller {
     	if (!$this->user->hasPermission('modify', 'catalog/vendor')) {
       		$this->error['warning'] = $this->language->get('error_permission');
     	}
-		
+
 		$this->load->model('catalog/vendor');
-		
+
 		foreach ($this->request->post['selected'] as $vendor_id) {
-			
+
   			$vendors_total = $this->model_catalog_vendor->getTotalVendorsByVendorId($vendor_id);
-    
+
 			if ($vendors_total) {
-	  			$this->error['warning'] = sprintf($this->language->get('error_vendor'), $vendors_total);	
-			}	
-	  	} 
-		
+	  			$this->error['warning'] = sprintf($this->language->get('error_vendor'), $vendors_total);
+			}
+	  	}
+
 		if (!$this->error) {
 	  		return TRUE;
 		} else {
 	  		return FALSE;
 		}
   	}
-	
+
 	public function zone() {
-	
+
 		$this->load->model('localisation/zone');
-		
+
     	$results = $this->model_localisation_zone->getZonesByCountryId($this->request->get['country_id']);
 		$output = '';
-		
+
 		foreach ($results as $result) {
 			$output .= '<option value="' . $result['zone_id'] . '"';
 				if (isset($this->request->get['zone_id']) && ($this->request->get['zone_id'] == $result['zone_id'])) {
 					$output .= ' selected="selected"';
 				}
-				
+
 			$output .= '>' . $result['name'] . '</option>';
-		} 
-		if (!$results) {		
+		}
+		if (!$results) {
 			$output .= '<option value="0">' . $this->language->get('text_none') . '</option>';
 		}
-		
+
 		$this->response->setOutput($output);
-  	} 
+  	}
 
 	Private function recursiveDelete($directory) {
 		if (is_dir($directory)) {
 			$handle = opendir($directory);
 		}
-				
+
 		if (!$handle) {
 			return false;
 		}
-				
+
 		while (false !== ($file = readdir($handle))) {
 			if ($file != '.' && $file != '..') {
 				if (!is_dir($directory . '/' . $file)) {
@@ -1202,11 +1202,11 @@ class ControllerCatalogVendor extends Controller {
 				}
 			}
 		}
-				
+
 		closedir($handle);
-				
+
 		rmdir($directory);
-				
+
 		return true;
 	}
 }

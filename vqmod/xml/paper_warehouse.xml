@@ -105,6 +105,12 @@
     		}
             ]]></add>
 		</operation>
+        <operation>
+			<search position="replace"><![CDATA[$output .= '<option value="' . $result['zone_id'] . '"';]]></search>
+			<add><![CDATA[
+            $output .= '<option value="' . $result['zone_id'] . '" data-code="' . $result['code'] . '"';
+            ]]></add>
+		</operation>
     </file>
 
     <file path="/admin/view/template/catalog/" name="vendor_form.tpl">
@@ -118,58 +124,61 @@
 			<search position="before"><![CDATA[<div class="tab-pane" id="tab-commission">]]></search>
 			<add><![CDATA[
             <div class="tab-pane" id="tab-warehouses">
-                <table id="warehouse" class="table table-striped table-hover text-center">
+                <table id="warehouse" class="table table-striped table-hover">
                     <thead>
                       <tr>
+                        <td width="5%">Code</td>
                         <td width="15%">State</td>
                         <td width="15%">Zone</td>
                         <td width="15%">City</td>
-                        <td width="35%">Address</td>
+                        <td width="30%">Address</td>
                         <td width="15%">Person</td>
                         <td width="5%"></td>
                       </tr>
                     </thead>
                     <tbody>
-                      <?php $warehouse_row = 0; ?>
-                      <?php foreach ($warehouses as $warehouse) { ?>
-                      <tr id="warehouse-row<?php echo $warehouse_row; ?>">
-                        <td class="text-left">
-                            <input type="hidden" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_id]" value="<?php echo $warehouse['warehouse_id']; ?>" />
-                            <select name="warehouse[<?php echo $warehouse_row; ?>][warehouse_state]" class="form-control">
-                                <option value=""><?php echo $text_select; ?></option>
-                                <?php foreach ($countries as $country) { ?>
-                                    <option value="<?php echo $country['country_id']; ?>" <?php if ($country['country_id'] == $warehouse['warehouse_state']) echo 'selected'; ?> ><?php echo $country['name']; ?></option>
-                                <?php } ?>
-                            </select>
-                        </td>
-                        <td class="text-right">
-                            <input type="hidden" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_code]; ?>]" value="<?php echo $warehouse['warehouse_code']; ?>" />
-                            <select name="warehouse[<?php echo $warehouse_row; ?>][warehouse_zone]" class="form-control"></select>
-                            <?php if (isset($error_warehouse[$warehouse_row])) { ?>
-                                <div class="text-danger"><?php echo $error_warehouse[$warehouse_row]; ?></div>
-                            <?php } ?>
-                        </td>
-                        <td class="text-right">
-                            <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_city]" value="<?php echo $warehouse['warehouse_city']; ?>" class="form-control" />
-                        </td>
-                        <td class="text-right">
-                            <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_address]" value="<?php echo $warehouse['warehouse_address']; ?>" class="form-control" />
-                        </td>
-                        <td class="text-right">
-                            <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_person]" value="<?php echo $warehouse['warehouse_person']; ?>" class="form-control" />
-                        </td>
-                        <td class="text-left">
-                            <button type="button" onclick="$('#warehouse-row<?php echo $warehouse_row; ?>').remove();" data-toggle="tooltip" title="" class="btn btn-danger">
-                                <i class="fa fa-minus-circle"></i>
-                            </button>
-                        </td>
-                      </tr>
-                      <?php $warehouse_row++; ?>
-                      <?php } ?>
+                        <?php $warehouse_row = 0; ?>
+                        <?php foreach ($warehouses as $warehouse) { ?>
+                            <tr id="warehouse-row<?php echo $warehouse_row; ?>">
+                                <td class="text-right">
+                                    <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_code]; ?>]" value="<?php echo $warehouse['warehouse_code']; ?>" class="wh-code" readonly />
+                                </td>
+                                <td class="text-left">
+                                    <input type="hidden" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_id]" value="<?php echo $warehouse['warehouse_id']; ?>" />
+                                    <select name="warehouse[<?php echo $warehouse_row; ?>][warehouse_state]" class="form-control">
+                                        <option value=""><?php echo $text_select; ?></option>
+                                        <?php foreach ($countries as $country) { ?>
+                                            <option value="<?php echo $country['country_id']; ?>" <?php if ($country['country_id'] == $warehouse['warehouse_state']) echo 'selected'; ?> ><?php echo $country['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </td>
+                                <td class="text-right">
+                                    <select name="warehouse[<?php echo $warehouse_row; ?>][warehouse_zone]" class="form-control"></select>
+                                    <?php if (isset($error_warehouse[$warehouse_row])) { ?>
+                                        <div class="text-danger"><?php echo $error_warehouse[$warehouse_row]; ?></div>
+                                    <?php } ?>
+                                </td>
+                                <td class="text-right">
+                                    <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_city]" value="<?php echo $warehouse['warehouse_city']; ?>" class="form-control" />
+                                </td>
+                                <td class="text-right">
+                                    <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_address]" value="<?php echo $warehouse['warehouse_address']; ?>" class="form-control" />
+                                </td>
+                                <td class="text-right">
+                                    <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_person]" value="<?php echo $warehouse['warehouse_person']; ?>" class="form-control" />
+                                </td>
+                                <td class="text-left">
+                                    <button type="button" onclick="$('#warehouse-row<?php echo $warehouse_row; ?>').remove();" data-toggle="tooltip" title="" class="btn btn-danger">
+                                        <i class="fa fa-minus-circle"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php $warehouse_row++; ?>
+                        <?php } ?>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="5"></td>
+                            <td colspan="6"></td>
                             <td class="text-left"><button type="button" onclick="addWarehouse();" data-toggle="tooltip" title="" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
                         </tr>
                     </tfoot>
@@ -180,6 +189,14 @@
         <operation>
 			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
 			<add><![CDATA[
+            <style>
+                .wh-code {
+                    background: transparent;
+                    border: none;
+                    width: 50px;
+                }
+            </style>
+
             <script type="text/javascript"><!--
             $('html').on('change', 'select[name*="state"]', function(){
                 $(this).closest('tr').find('select[name*="zone"]').load('index.php?route=catalog/vendor/zone&token=<?= $token ?>&country_id=' + this.value);
@@ -189,7 +206,9 @@
 
             setTimeout(function(){
                 <?php foreach($warehouses as $warehouse) { ?>
-                    $('#warehouse').find('input[value=<?= $warehouse["warehouse_id"] ?>]').closest('tr').find('select[name*="zone"]').val('<?= $warehouse["warehouse_zone"] ?>');
+                    var tr = $('#warehouse').find('input[value=<?= $warehouse["warehouse_id"] ?>]').closest('tr');
+                    tr.find('select[name*="zone"]').val('<?= $warehouse["warehouse_zone"] ?>');
+                    tr.find('input[name*="code"]').val(tr.find('select[name*="zone"] :selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
                 <?php } ?>
             }, 900);
 
@@ -197,6 +216,9 @@
 
             function addWarehouse() {
                 html  = '<tr id="warehouse-row' + warehouse_row + '">';
+                html += '<td class="text-right">';
+                html += '<input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_code]; ?>]" value="<?php echo $warehouse['warehouse_code']; ?>" class="wh-code" readonly />';
+                html += '</td>';
                 html += '<td class="text-left">';
                 html += '<input type="hidden" name="warehouse[' + warehouse_row + '][warehouse_id]" value="" />';
                 html += '<select name="warehouse[' + warehouse_row + '][warehouse_state]" class="form-control">';
