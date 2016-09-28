@@ -203,7 +203,7 @@
                     tr.find('select[name*="zone"]').load('index.php?route=catalog/vendor/zone&token=<?= $token ?>&country_id=' + this.value);
                     setTimeout(function(){
                         tr.find('input[name*="code"]').val(tr.find('select[name*="zone"] :selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
-                    }, 600);
+                    }, 900);
                 });
 
                 $('html').on('change', 'select[name*="zone"]', function(){
