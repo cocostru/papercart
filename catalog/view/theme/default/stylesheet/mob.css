@@ -248,6 +248,7 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
     .side-fbox input {
         -webkit-appearance: none;
         -webkit-border-radius: 0;
+        border: 1px solid;
         border-radius: 0;
         margin-left: -19px!important;
         height: 12px;
