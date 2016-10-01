@@ -588,7 +588,6 @@ function commonActs(){
     var mql = window.matchMedia('only screen and (min-width : 0) and (max-width : 767px) and (orientation : landscape), only screen and (min-width : 0) and (max-width : 767px) and (orientation : portrait)');
 
     if (mql.matches) {
-        mets.mobCart();
         mets.mobCommons();
     } else {
         mets.moreNav();
