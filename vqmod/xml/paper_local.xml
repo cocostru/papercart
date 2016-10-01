@@ -32,6 +32,20 @@
 		</operation>
     </file>
 
+	<file path="/admin/controller/catalog/" name="vdi_vendor_profile.php">
+		<operation>
+			<search position="replace"><![CDATA[$data['countries'] = $this->model_localisation_country->getCountries();]]></search>
+			<add><![CDATA[
+            $data['countries'] = array();
+    		$fcountries = $this->model_localisation_country->getCountries();
+    		foreach ($fcountries as $result) {
+    			if ($result['country_id'] > 257)
+    			$data['countries'][] = $result;
+    		}
+      		]]></add>
+		</operation>
+    </file>
+
     <file path="/admin/controller/localisation/" name="country.php">
 		<operation>
 			<search position="after"><![CDATA[foreach ($results as $result) {]]></search>

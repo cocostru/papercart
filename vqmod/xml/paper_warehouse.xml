@@ -37,8 +37,10 @@
 			<add><![CDATA[
             if (isset($data['warehouse'])) {
     			foreach ($data['warehouse'] as $warehouse) {
-    				$this->db->query("INSERT INTO " . DB_PREFIX . "warehouse SET vendor_id = '" . (int)$vendor_id . "', warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_city = '" . $warehouse['warehouse_city'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "'");
+    				$this->db->query("INSERT INTO " . DB_PREFIX . "warehouse SET vendor_id = '" . (int)$vendor_id . "', warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "'");
     			}
+
+				// warehouse_city = '" . $warehouse['warehouse_city'] . "',
     		}
             ]]></add>
 		</operation>
@@ -50,10 +52,58 @@
                     $exists = $this->db->query("SELECT * FROM " . DB_PREFIX . "warehouse WHERE warehouse_id = '" . (int)$warehouse['warehouse_id'] . "'");
 
                     if (!$exists->rows)
-    				    $this->db->query("INSERT INTO " . DB_PREFIX . "warehouse SET vendor_id = '" . (int)$vendor_id . "', warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_city = '" . $warehouse['warehouse_city'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "'");
+    				    $this->db->query("INSERT INTO " . DB_PREFIX . "warehouse SET vendor_id = '" . (int)$vendor_id . "', warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "'");
 
                     else
-                        $this->db->query("UPDATE " . DB_PREFIX . "warehouse SET warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_city = '" . $warehouse['warehouse_city'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "' WHERE warehouse_id = '" . (int)$warehouse['warehouse_id'] . "'");
+                        $this->db->query("UPDATE " . DB_PREFIX . "warehouse SET warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "' WHERE warehouse_id = '" . (int)$warehouse['warehouse_id'] . "'");
+    			}
+    		}
+            ]]></add>
+		</operation>
+    </file>
+
+	<file path="/admin/model/catalog/" name="vdi_vendor_profile.php">
+        <operation>
+			<search position="after"><![CDATA[class ModelCatalogVDIVendorProfile extends Model {]]></search>
+			<add><![CDATA[
+            public function getWarehouses($vendor_id) {
+    			$exists = $this->db->query("SHOW TABLES LIKE 'warehouse'");
+
+                if (!$exists->rows)
+                    $this->db->query("
+                        CREATE TABLE `" . DB_PREFIX . "warehouse` (
+                            `warehouse_id` INT(11) NOT NULL AUTO_INCREMENT,
+                            `vendor_id` INT(11) NOT NULL,
+                            `warehouse_code` varchar(8) NOT NULL,
+                            `warehouse_zone` varchar(32) NOT NULL,
+                            `warehouse_city` varchar(32) NOT NULL,
+                            `warehouse_state` varchar(32) NOT NULL,
+                            `warehouse_person` varchar(64) NOT NULL,
+                            `warehouse_address` varchar(255) NOT NULL,
+                            PRIMARY KEY (`warehouse_id`)
+                        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+                    ");
+
+                $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "warehouse WHERE vendor_id = '" . (int)$vendor_id . "'");
+
+				return $query->rows;
+            }
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="before"><![CDATA[$this->cache->delete('vendor');]]></search>
+			<add><![CDATA[
+			$vendor_id = $this->getVendorProfile($user_id)['vendor_id'];
+
+            if (isset($data['warehouse'])) {
+    			foreach ($data['warehouse'] as $warehouse) {
+                    $exists = $this->db->query("SELECT * FROM " . DB_PREFIX . "warehouse WHERE warehouse_id = '" . (int)$warehouse['warehouse_id'] . "'");
+
+                    if (!$exists->rows)
+    				    $this->db->query("INSERT INTO " . DB_PREFIX . "warehouse SET vendor_id = '" . (int)$vendor_id . "', warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "'");
+
+                    else
+                        $this->db->query("UPDATE " . DB_PREFIX . "warehouse SET warehouse_code = '" . $warehouse['warehouse_code'] . "', warehouse_zone = '" . $warehouse['warehouse_zone'] . "', warehouse_state = '" . $warehouse['warehouse_state'] . "', warehouse_person = '" . $warehouse['warehouse_person'] . "', warehouse_address = '" . $warehouse['warehouse_address'] . "' WHERE warehouse_id = '" . (int)$warehouse['warehouse_id'] . "'");
     			}
     		}
             ]]></add>
@@ -74,6 +124,59 @@
     			$warehouses = $this->request->post['warehouse'];
     		} elseif (isset($this->request->get['vendor_id'])) {
     			$warehouses = $this->model_catalog_vendor->getWarehouses($this->request->get['vendor_id']);
+    		} else {
+    			$warehouses = array();
+    		}
+
+    		$data['warehouses'] = array();
+
+    		foreach ($warehouses as $warehouse) {
+    			$data['warehouses'][] = array(
+                    'warehouse_id'      => $warehouse['warehouse_id'],
+                    'warehouse_code'    => $warehouse['warehouse_code'],
+                    'warehouse_zone'    => $warehouse['warehouse_zone'],
+                    'warehouse_city'    => $warehouse['warehouse_city'],
+                    'warehouse_state'   => $warehouse['warehouse_state'],
+                    'warehouse_person'  => $warehouse['warehouse_person'],
+    				'warehouse_address' => $warehouse['warehouse_address'],
+    			);
+    		}
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="after"><![CDATA[private function validateForm() {]]></search>
+			<add><![CDATA[
+            if (isset($this->request->post['warehouse'])) {
+    			foreach ($this->request->post['warehouse'] as $warehouse_id => $warehouse) {
+					//if ((utf8_strlen($warehouse['warehouse_city']) < 3) || (utf8_strlen($warehouse['warehouse_zone']) == '')) {
+					//	$this->error['warehouse'][$warehouse_id] = 'Error!';
+					//}
+    			}
+    		}
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="replace"><![CDATA[$output .= '<option value="' . $result['zone_id'] . '"';]]></search>
+			<add><![CDATA[
+            $output .= '<option value="' . $result['zone_id'] . '" data-code="' . $result['code'] . '"';
+            ]]></add>
+		</operation>
+    </file>
+
+	<file path="/admin/controller/catalog/" name="vdi_vendor_profile.php">
+        <operation>
+			<search position="before"><![CDATA[$this->response->setOutput($this->load->view('catalog/vdi_vendor_profile_form', $data));]]></search>
+			<add><![CDATA[
+            if (isset($this->error['warehouse'])) {
+                $data['error_warehouse'] = $this->error['warehouse'];
+            } else {
+                $data['error_warehouse'] = array();
+            }
+
+            if (isset($this->request->post['warehouse'])) {
+    			$warehouses = $this->request->post['warehouse'];
+    		} elseif ($this->user->getId()) {
+    			$warehouses = $this->model_catalog_vdi_vendor_profile->getWarehouses($this->model_catalog_vdi_vendor_profile->getVendorProfile($this->user->getId())['vendor_id']);
     		} else {
     			$warehouses = array();
     		}
@@ -195,6 +298,9 @@
                     border: none;
                     width: 50px;
                 }
+				.table > thead:first-child > tr:first-child > td {
+				    background: #eee;
+				}
             </style>
 
             <script type="text/javascript"><!--
@@ -260,7 +366,159 @@
 
                 	warehouse_row++;
                 }
-            //--></script></div>
+            //--></script>
+            ]]></add>
+		</operation>
+    </file>
+
+	<file path="/admin/view/template/catalog/" name="vdi_vendor_profile_form.tpl">
+        <operation>
+			<search position="before"><![CDATA[<li><a href="#tab-finance" data-toggle="tab"><?php echo $tab_finance; ?></a></li>]]></search>
+			<add><![CDATA[
+            <li><a href="#tab-warehouses" data-toggle="tab">Warehouses</a></li>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="before"><![CDATA[<div class="tab-pane" id="tab-finance">]]></search>
+			<add><![CDATA[
+            <div class="tab-pane" id="tab-warehouses">
+                <table id="warehouse" class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <td width="20%">State</td>
+                        <td width="20%">Zone</td>
+                        <!-- <td>City</td> -->
+                        <td width="40%">Address</td>
+                        <td width="15%">Person</td>
+                        <td width="5%"></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <?php $warehouse_row = 0; ?>
+                        <?php foreach ($warehouses as $warehouse) { ?>
+                            <tr id="warehouse-row<?php echo $warehouse_row; ?>">
+                                <td class="text-left">
+									<input type="hidden" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_code]; ?>]" value="<?php echo $warehouse['warehouse_code']; ?>" class="wh-code" readonly />
+
+                                    <input type="hidden" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_id]" value="<?php echo $warehouse['warehouse_id']; ?>" />
+
+                                    <select name="warehouse[<?php echo $warehouse_row; ?>][warehouse_state]" class="form-control">
+                                        <option value=""><?php echo $text_select; ?></option>
+                                        <?php foreach ($countries as $country) { ?>
+                                            <option value="<?php echo $country['country_id']; ?>" <?php if ($country['country_id'] == $warehouse['warehouse_state']) echo 'selected'; ?> ><?php echo $country['name']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </td>
+                                <td class="text-right">
+                                    <select name="warehouse[<?php echo $warehouse_row; ?>][warehouse_zone]" class="form-control"></select>
+                                    <?php if (isset($error_warehouse[$warehouse_row])) { ?>
+                                        <div class="text-danger"><?php echo $error_warehouse[$warehouse_row]; ?></div>
+                                    <?php } ?>
+                                </td>
+                                <!-- <td class="text-right">
+                                    <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_city]" value="<?php echo $warehouse['warehouse_city']; ?>" class="form-control" />
+                                </td> -->
+                                <td class="text-right">
+                                    <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_address]" value="<?php echo $warehouse['warehouse_address']; ?>" class="form-control" />
+                                </td>
+                                <td class="text-right">
+                                    <input type="text" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_person]" value="<?php echo $warehouse['warehouse_person']; ?>" class="form-control" />
+                                </td>
+                                <td class="text-left">
+                                    <button type="button" onclick="$('#warehouse-row<?php echo $warehouse_row; ?>').remove();" data-toggle="tooltip" title="" class="btn btn-danger">
+                                        <i class="fa fa-minus-circle"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php $warehouse_row++; ?>
+                        <?php } ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4"></td>
+                            <td class="text-left"><button type="button" onclick="addWarehouse();" data-toggle="tooltip" title="" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            ]]></add>
+		</operation>
+        <operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[
+            <style>
+                .wh-code {
+                    background: transparent;
+                    border: none;
+                    width: 50px;
+                }
+				.table > thead:first-child > tr:first-child > td {
+				    background: #eee;
+				}
+            </style>
+
+            <script type="text/javascript"><!--
+                $('html').on('change', 'select[name*="state"]', function(){
+                    var tr = $(this).closest('tr');
+                    tr.find('select[name*="zone"]').load('index.php?route=catalog/vdi_vendor_profile/zone&token=<?= $token ?>&country_id=' + this.value);
+                    setTimeout(function(){
+                        tr.find('input[name*="code"]').val(tr.find('select[name*="zone"] :selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
+                    }, 900);
+                });
+
+                $('html').on('change', 'select[name*="zone"]', function(){
+                    $(this).closest('tr').find('input[name*="code"]').val($(this).find(':selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
+                });
+
+                $('select[name*="state"]').trigger('change');
+
+                setTimeout(function(){
+                    <?php foreach($warehouses as $warehouse) { ?>
+                        var tr = $('#warehouse').find('input[value=<?= $warehouse["warehouse_id"] ?>]').closest('tr');
+                        tr.find('select[name*="zone"]').val('<?= $warehouse["warehouse_zone"] ?>');
+                        tr.find('input[name*="code"]').val(tr.find('select[name*="zone"] :selected').attr('data-code') + '<?= $warehouse["warehouse_id"] ?>');
+                    <?php } ?>
+                }, 900);
+
+                var warehouse_row = <?php echo $warehouse_row; ?>;
+
+                function addWarehouse() {
+                    html  = '<tr id="warehouse-row' + warehouse_row + '">';
+                    html += '<td class="text-left">';
+					html += '<input type="hidden" name="warehouse[<?php echo $warehouse_row; ?>][warehouse_code]; ?>]" value="" class="wh-code" readonly />';
+                    html += '<input type="hidden" name="warehouse[' + warehouse_row + '][warehouse_id]" value="" />';
+                    html += '<select name="warehouse[' + warehouse_row + '][warehouse_state]" class="form-control">';
+                    html += '<option value=""><?= $text_select ?></option>';
+                    <?php foreach ($countries as $country) { ?>
+                    html += '<option value="<?= $country['country_id'] ?>"><?= $country['name'] ?></option>';
+                    <?php } ?>
+                    html += '</select>';
+                    html += '</td>';
+                    html += '<td class="text-right">';
+                    html += '<input type="hidden" name="warehouse[' + warehouse_row + '][warehouse_code]; ?>]" value="" />';
+                    html += '<select name="warehouse[' + warehouse_row + '][warehouse_zone]" class="form-control"></select>';
+                    html += '</td>';
+                    <!-- html += '<td class="text-right">'; -->
+                    <!-- html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_city]" value="" class="form-control" />'; -->
+                    <!-- html += '</td>'; -->
+                    html += '<td class="text-right">';
+                    html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_address]" value="" class="form-control" />';
+                    html += '</td>';
+                    html += '<td class="text-right">';
+                    html += '<input type="text" name="warehouse[' + warehouse_row + '][warehouse_person]" value="" class="form-control" />';
+                    html += '</td>';
+                    html += '<td class="text-left">';
+                    html += '<button type="button" onclick="$(\'#warehouse-row' + warehouse_row + '\').remove();" data-toggle="tooltip" title="" class="btn btn-danger">';
+                    html += '<i class="fa fa-minus-circle"></i>';
+                    html += '</button>';
+                    html += '</td>';
+                    html += '</tr>';
+
+                	$('#warehouse tbody').append(html);
+
+                	warehouse_row++;
+                }
+            //--></script>
             ]]></add>
 		</operation>
     </file>
