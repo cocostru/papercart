@@ -143,10 +143,10 @@
 .side-fbox .loc-filter .checkbox.collapse label {
     /*padding-left: 40px;*/
 }
-.side-fbox .loc-filter .checkbox input {
-    /*display: none;*/
+/*.side-fbox .loc-filter .checkbox input {
+    display: none;
     margin-top: -1px;
-}
+}*/
 /*.side-fbox .loc-filter .checkbox > label > span {
     display: none;
     color: #28e;
@@ -155,9 +155,9 @@
 .side-fbox .loc-filter .checkbox.m > label > span {
     display: inline-block;
 }
-.side-fbox .loc-filter .checkbox.m > label, .side-fbox .loc-filter .checkbox.m > i {
-    /*color: #28e;*/
-}
+/*.side-fbox .loc-filter .checkbox.m > label, .side-fbox .loc-filter .checkbox.m > i {
+    color: #28e;
+}*/
 .side-fbox .fbox-icon .fa {
     text-align: center;
     margin: 0 2px 0 0;
