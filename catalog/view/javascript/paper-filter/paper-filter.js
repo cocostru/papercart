@@ -469,7 +469,7 @@ function commonActs(){
 
         mobCommons: function () {
             $('.slide-filter').insertAfter('.grain-filter');
-            $('.side-cat .show-subcat').trigger('click');
+            $('.show-subcat').trigger('click');
         },
 
         rowClick: function (row) {
