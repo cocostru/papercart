@@ -277,21 +277,21 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
     .table-wrap tr > td:first-of-type {
         padding-left: 7.5px!important;
     }
-    .table-wrap tr > td:last-of-type {
-        /*padding-right: 7.5px!important;*/
-    }
+    /*.table-wrap tr > td:last-of-type {
+        padding-right: 7.5px!important;
+    }*/
     .table-wrap tr td:nth-last-of-type(5), .table-wrap tr td:nth-last-of-type(6) {
         display: none;
     }
-    .table-wrap tbody > tr td.name small:first-of-type {
+    /*.table-wrap tbody > tr td.name small:first-of-type {
         display: none;
-    }
-    .table-wrap tr td:first-of-type {
-        /*width: 40%;*/
-    }
-    .table-wrap .table > tbody > tr > td.qinput {
-        /*padding: 3px 2px;*/
-    }
+    }*/
+    /*.table-wrap tr td:first-of-type {
+        width: 40%;
+    }*/
+    /*.table-wrap .table > tbody > tr > td.qinput {
+        padding: 3px 2px;
+    }*/
     .table-wrap tr td.qinput input {
         height: 20px;
         -webkit-appearance: none;
