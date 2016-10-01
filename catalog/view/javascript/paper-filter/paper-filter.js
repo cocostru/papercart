@@ -499,7 +499,7 @@ function commonActs(){
             });
 
             $('.show-rest').on('click', function(){
-                if ($(this).parent().find('.collapse.in').length > 0) $(this).html('show all <small>+</small>');
+                if ($(this).parent().find('> .collapse.in').length > 0) $(this).html('show all <small>+</small>');
                 else $(this).html('show less <small>-</small>');
             });
         },
