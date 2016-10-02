@@ -348,12 +348,6 @@
     </file>
 
 	<file path="/admin/view/template/catalog/" name="product_form.tpl">
-		<operation>
-			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
-			<add><![CDATA[
-            <style> select[name*=price_prefix], select[name*=points_prefix], select[name*=weight_prefix] { float: left; display: inline-block; width: 40% } input[name*=price], input[name*=points], input[name*=weight] { display: inline-block; width: 50% } table[id*=option-value] thead td { font-weight: normal; text-align: center } table[id*=option-value] .form-control { height: 30px; padding: 5px } table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6) { display: none } table[id*=option-value] td.m { display: table-cell } table[id*=option-value], table[id*=option-value] tfoot td { border: none } table[id*=option-value] thead td { border-bottom-width: 1px; border-top: 1px solid #ddd !important } table[id*=option-value] tr td:last-of-type { text-align: center; width: 5% } </style>
-            ]]></add>
-		</operation>
         <operation>
 			<search position="replace"><![CDATA[html += '	      <option value="0"><?php echo $text_no; ?></option>';]]></search>
 			<add><![CDATA[
@@ -375,13 +369,102 @@
 		<operation>
 			<search index="2" position="replace"><![CDATA[<td></td>]]></search>
 			<add><![CDATA[
-            <td><div class="btn"  data-toggle="tooltip" data-original-title="All Settings" onclick="$('table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6)').toggleClass('m');$(this).find('i').toggleClass('fa-chevron-left').toggleClass('fa-chevron-right')"><i class="fa fa-chevron-left"></i></div></td>
+            <td><div class="btn show-all"  data-toggle="tooltip" data-original-title="All Settings"><i class="fa fa-chevron-left"></i></div></td>
             ]]></add>
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA[html += '        <td></td>';]]></search>
 			<add><![CDATA[
-            html += '<td><div class="btn"  data-toggle="tooltip" data-original-title="All Settings" onclick="$(\'table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6)\').toggleClass(\'m\');$(this).find(\'i\').toggleClass(\'fa-chevron-left\').toggleClass(\'fa-chevron-right\')"><i class="fa fa-chevron-left"></i></div></td>';
+            html += '<td><div class="btn show-all"  data-toggle="tooltip" data-original-title="All Settings"><i class="fa fa-chevron-left"></i></div></td>';
+            ]]></add>
+		</operation>
+		<operation>
+			<search index="1" position="replace"><![CDATA[<td class="text-right"><?php echo $entry_quantity; ?></td>]]></search>
+			<add><![CDATA[
+            <td class="text-right"><?php echo $entry_quantity; ?><br/><small>* The actual total quantity is <?php echo $quantity; ?></small></td>
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[html += '        <td class="text-right"><?php echo $entry_quantity; ?></td>';]]></search>
+			<add><![CDATA[
+            html += '<td class="text-right"><?php echo $entry_quantity; ?><br/><small>* The actual total quantity is <?php echo $quantity; ?></small></td>';
+            ]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+			<add><![CDATA[
+			<style>
+				select[name*=price_prefix], select[name*=points_prefix], select[name*=weight_prefix] {
+					float: left;
+					display: inline-block;
+					width: 40%
+				}
+				input[name*=price], input[name*=points], input[name*=weight] {
+					display: inline-block;
+					width: 50%
+				}
+				table[id*=option-value] thead td {
+					font-weight: normal;
+					text-align: center
+				}
+				table[id*=option-value] .form-control {
+					height: 30px;
+					padding: 5px
+				}
+				table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6) select {
+					display: none
+				}
+				table[id*=option-value] td:nth-of-type(6) input {
+					width: 100%
+				}
+				table[id*=option-value] td.m {
+					display: table-cell
+				}
+				/* table[id*=option-value] td.m select {
+					display: block
+				}
+				table[id*=option-value] td:nth-of-type(6).m input {
+					width: 50%
+				} */
+				table[id*=option-value], table[id*=option-value] tfoot td {
+					border: none
+				}
+				table[id*=option-value] thead td {
+					border-bottom-width: 1px;
+					border-top: 1px solid #ddd !important
+				}
+				table[id*=option-value] tr td:last-of-type {
+					text-align: center;
+					width: 5%
+				}
+			</style>
+
+			<script type="text/javascript"><!--
+				$('html').on('click', '.show-all', function(){
+					$('table[id*=option-value] td:nth-of-type(4), table[id*=option-value] td:nth-of-type(5), table[id*=option-value] td:nth-of-type(6)').toggleClass('m');
+					$(this).find('i').toggleClass('fa-chevron-left').toggleClass('fa-chevron-right');
+				});
+				$('html').on('mousedown', '[id*="tab-option"] tfoot button', function(){
+					var chevron = $(this).closest('table').find('.show-all .fa');
+					if(chevron.hasClass('fa-chevron-right')) chevron.trigger('click');
+				});
+				$('html').on('input', '[id*="tab-option"] [name*="quantity"]', function(){
+					var all = $(this).closest('table').find('[name*="quantity"]'),
+						sum = 0;
+					all.each(function(){
+						sum += parseInt($(this).val());
+					});
+					if (sum > parseInt(<?= $quantity ?>)) {
+						$(this).closest('table').find('thead td:nth-of-type(2) small').addClass('text-danger');
+						all.parent().addClass(' has-error');
+					}
+					else {
+						$(this).closest('table').find('thead td:nth-of-type(2) small').removeClass('text-danger');
+						all.parent().removeClass(' has-error');
+					}
+				});
+				$('[id*="tab-option"] [name*="quantity"]').trigger('input');
+			//--></script>
             ]]></add>
 		</operation>
     </file>
