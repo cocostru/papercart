@@ -75,6 +75,8 @@
 				$product_info = $this->model_catalog_product->getProduct($result['product_id']);
 				$product_cats = $this->model_catalog_product->getCategories($result['product_id']);
 
+				$thresholds[$product_info['model']][] = $product_info['threshold'];
+
 				foreach ($product_cats as $product_cat) {
 					$category_info = $this->model_catalog_category->getCategory($product_cat['category_id']);
 					$thresholds[$product_info['model']][] = $category_info['threshold'];
