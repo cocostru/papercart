@@ -142,8 +142,6 @@ function cboxChange(){
                     klas = 'rolbox';
             }
 
-            console.log(text);
-
             if ( !filt.hasClass('grain-filter') && !filt.hasClass('slide-filter') ) {
                 if ( ($.inArray(text.toLowerCase(), arbo) > -1 && arbo.length > 0) || (arbo.length == 0) ) {
                     $(this).removeClass(klas);
@@ -369,7 +367,6 @@ function initSliders(){
                 if (!$(this).hasClass('manbox') && !$(this).hasClass('locbox') && !$(this).hasClass('rolbox')) {
                     $(this).fadeIn('slow');
                 }
-                $('.table-wrap').hide().fadeIn('slow');
             });
         }
     };
