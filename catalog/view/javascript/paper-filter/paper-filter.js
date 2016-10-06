@@ -10,26 +10,26 @@ function addToCartMultiple() {
         complete: function() {
             $('.btn-buy').button('reset');
         },
-    		success: function(json) {
-      			$('.alert, .alert-danger').remove();
-      			$('.form-group').removeClass('has-error');
+		success: function(json) {
+  			$('.alert, .alert-danger').remove();
+  			$('.form-group').removeClass('has-error');
 
-      			if (json['success']) {
-        				$('#cart').after('<div class="alert alert-success text-center" style="line-height:1">' + json['success'] + '</div>');
+  			if (json['success']) {
+				$('#cart').after('<div class="alert alert-success text-center" style="line-height:1">' + json['success'] + '</div>');
 
                 setTimeout(function () {
-        					$('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
-        				}, 100);
+					$('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+				}, 100);
 
-        				$('#cart > ul').load('index.php?route=common/cart/info ul li');
+				$('#cart > ul').load('index.php?route=common/cart/info ul li');
 
                 $('.qinput input[name="quantity[]"], .ainput input').val('');
 
                 setTimeout(function () {
-        					$('.alert').fadeOut('slow');
-        				}, 12000);
-      			}
-    		}
+					$('.alert').fadeOut('slow');
+				}, 12000);
+  			}
+		}
     });
 }
 
@@ -464,6 +464,21 @@ function commonActs(){
             });
         },
 
+        fixSearch: function () {
+            $('#search-mod input[name=\'search\']').parent().find('button').on('click', function() {
+                var url = $('base').attr('href') + 'index.php?route=product/search',
+                    value = $('#search-mod input[name=\'search\']').val();
+
+                if (value) url += '&search=' + encodeURIComponent(value);
+                location = url;
+            });
+            $('#search-mod input[name=\'search\']').on('keydown', function(e) {
+                if (e.keyCode == 13) {
+                    $('#search-mod input[name=\'search\']').parent().find('button').trigger('click');
+                }
+            });
+        },
+
         mobCommons: function () {
             $('.slide-filter').insertAfter('.grain-filter');
             $('.show-subcat').trigger('click');
@@ -526,48 +541,91 @@ function commonActs(){
 
         optionChange: function () {
             $('html').on('change', 'td select', function(){
-                var parent = $(this).parent(),
-                    hidden = parent.find('[type=hidden]'),
-                    uname = $(this).val(),
-                    uval = $(this).find(':selected').attr('data-val'),
-                    alt = $(this).closest('tr').find('td.ainput input'),
-                    qnt = $(this).closest('tr').find('td.qinput input[type=text]'),
-                    aval = alt.val(),
-                    qval = qnt.val();
+                var optvalid = $(this).val(),
+                    parent   = $(this).parent(),
+                    tr       = $(this).closest('tr'),
+                    selected = $(this).find(':selected'),
+                    omodel   = selected.attr('data-model'),
+                    weight   = selected.attr('data-weight'),
+                    hidden   = parent.find('[type=hidden]'),
+                    stock    = tr.find('td.stock .ostock'),
+                    ainput   = tr.find('td.ainput input'),
+                    qinput   = tr.find('td.qinput input'),
+                    trmodel  = tr.attr('data-model'),
+                    aval     = ainput.val(),
+                    qval     = qinput.val();
 
-                // hidden.val(uname);
+                if (parent.hasClass('location')) {
+                    if (omodel != trmodel) {
+                        var show  = $('tr[data-model="' + omodel + '"]'),
+                            stock = show.find('td.stock .ostock');
+
+                        tr.addClass('m');
+                        show.removeClass('m').addClass('s');
+                        show.find('option[value="' + optvalid + '"]').prop('selected', 'selected');
+                        stock.each(function(){
+                            if (parseInt($(this).attr('data-valid')) == parseInt(optvalid)) $(this).addClass('m');
+                            else $(this).removeClass('m');
+                        });
+                    }
+                    else {
+                        stock.each(function(){
+                            if (parseInt($(this).attr('data-valid')) == parseInt(optvalid)) $(this).addClass('m');
+                            else $(this).removeClass('m');
+                        });
+                    }
+                }
 
                 if (parent.hasClass('aunit')) {
                     // hidden.attr('data-unit', uval);
                     if (qval > 0 || aval > 0) {
-                        alt.val(parseFloat(qval / uval).toFixed(2));
+                        alt.val(parseFloat(qval / weight).toFixed(2));
                     }
 
                     // $.ajax({
-                	// 	url: 'index.php?route=module/paper_filter/baseUnit',
-                	// 	type: 'post',
-                	// 	data: {bunit: uname}
+                	//     url: 'index.php?route=module/paper_filter/baseUnit',
+                	//     type: 'post',
+                	//     data: { bunit: uname }
                     // });
                 }
             });
 
-            $('html').on('input', 'td.qinput input[type=text]', function(){
-                var alt = $(this).closest('tr').find('td.ainput input'),
-                    ratio = $(this).closest('tr').find('td.aunit select').find(':selected').attr('data-val'),
-                    qval = $(this).val();
+            $('html').on('input', 'td input[type=text]', function(){
+                var ratio   = $(this).closest('tr').find('td.aunit select').find(':selected').attr('data-weight'),
+                    alt     = $(this).closest('tr').find('td.ainput input'),
+                    qnt     = $(this).closest('tr').find('td.qinput input'),
+                    parent  = $(this).parent(),
+                    thisval = $(this).val();
 
-                alt.val(qval > 0 ? parseFloat(qval / ratio).toFixed(2) : '');
-            });
-
-            $('html').on('input', 'td.ainput input[type=text]', function(){
-                var qnt = $(this).closest('tr').find('td.qinput input[type=text]'),
-                    ratio = $(this).closest('tr').find('td.aunit select').find(':selected').attr('data-val'),
-                    aval = $(this).val();
-
-                qnt.val(aval > 0 ? parseFloat(aval * ratio).toFixed(2) : '');
+                if (parent.hasClass('ainput')) qnt.val(thisval > 0 ? parseFloat(thisval * ratio).toFixed(2) : '');
+                if (parent.hasClass('qinput')) alt.val(thisval > 0 ? parseFloat(thisval / ratio).toFixed(2) : '');
             });
 
             $('td select').trigger('change');
+        },
+
+        checkDesc: function () {
+            $('.table-wrap tr.product-row').each(function(){
+                var t     = $(this),
+                    desc  = $(this).attr('data-desc'),
+                    all   = $('.table-wrap').find('tr[data-desc="' + desc + '"]'),
+                    opts  = '';
+
+                if (all.length > 1 && t.attr('data-model') == $(all[0]).attr('data-model')) {
+                    all.each(function(i){
+                        opts += $(this).find('.location select').html();
+
+                        if (i > 0) $(this).addClass('m').insertAfter(t);
+
+                        if (i == (all.length - 1)) {
+                            all.each(function(k){
+                                $(this).find('.location select').html(opts);
+                                if (k == (all.length - 1)) return false;
+                            });
+                        }
+                    });
+                }
+            });
         },
 
         locationVoid: function () {
@@ -577,18 +635,17 @@ function commonActs(){
         }
     };
 
-    mets.optionChange();
-    mets.locationVoid();
-    mets.expandShow();
-    mets.penHover();
-
     var mql = window.matchMedia('only screen and (min-width : 0) and (max-width : 767px) and (orientation : landscape), only screen and (min-width : 0) and (max-width : 767px) and (orientation : portrait)');
 
-    if (mql.matches) {
-        mets.mobCommons();
-    } else {
-        mets.moreNav();
-    }
+    if (mql.matches) mets.mobCommons();
+    else mets.moreNav();
+
+    mets.penHover();
+    mets.fixSearch();
+    mets.expandShow();
+    mets.locationVoid();
+    mets.optionChange();
+    mets.checkDesc();
 
     slide ? $('.filter').removeClass('x') : $('.filter').addClass('x');
 

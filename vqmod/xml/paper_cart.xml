@@ -58,13 +58,11 @@
 								$option = array();
 							}
 
-			            	$quantity = $this->request->post['quantity'][$i];
-
 							$products_to_add[] = array(
 								'product_id' => $this->request->post['product_id'][$i],
-								'option'     => $option,
-								'quantity'   => $quantity,
+								'quantity'   => $this->request->post['quantity'][$i],
 								'name'       => $product_info['name'],
+								'option'     => $option,
 							);
 			    	    }
 			    	}
