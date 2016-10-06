@@ -188,10 +188,10 @@
         background-color: rgba(220, 220, 220, .5);
     }
     50% {
-        background-color: rgba(220, 220, 220, .25);
+        background-color: rgba(220, 230, 220, .5);
     }
     100% {
-        background-color: transparent;
+        background-color: rgba(220, 240, 215, .5);
     }
 }
 
@@ -200,6 +200,7 @@
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: 1;
     -webkit-animation-timing-function: ease-out;
+    background-color: rgba(220, 240, 215, .5);
 }
 .table-wrap .table > tbody > tr.m {
     display: none;

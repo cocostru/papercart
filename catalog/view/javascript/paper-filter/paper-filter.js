@@ -615,7 +615,10 @@ function commonActs(){
                     all.each(function(i){
                         opts += $(this).find('.location select').html();
 
-                        if (i > 0) $(this).addClass('m').insertAfter(t);
+                        if (i > 0) {
+                            t.addClass('s');
+                            $(this).addClass('m').insertAfter(t);
+                        }
 
                         if (i == (all.length - 1)) {
                             all.each(function(k){
