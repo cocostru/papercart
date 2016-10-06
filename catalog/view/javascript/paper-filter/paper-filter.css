@@ -204,6 +204,7 @@
 }
 .table-wrap .table > tbody > tr.m {
     display: none;
+    opacity: .5;
 }
 .table-wrap .table > tbody > tr > td, .table-wrap .table > thead > tr > td {
     padding: 1px 3px;
