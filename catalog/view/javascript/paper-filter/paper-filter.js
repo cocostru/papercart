@@ -145,7 +145,7 @@ function cboxChange(){
             if ( !filt.hasClass('grain-filter') && !filt.hasClass('slide-filter') ) {
                 if ( ($.inArray(text.toLowerCase(), arbo) > -1 && arbo.length > 0) || (arbo.length == 0) ) {
                     $(this).removeClass(klas);
-                    if (!$(this).hasClass('cutbox') && !$(this).hasClass('manbox') && !$(this).hasClass('locbox') && !$(this).hasClass('rolbox')) {
+                    if (!$(this).hasClass('cutbox') && !$(this).hasClass('manbox') && !$(this).hasClass('locbox') && !$(this).hasClass('rolbox') && !$(this).hasClass('m')) {
                         $(this).fadeIn('slow');
                     }
                 }
@@ -301,7 +301,7 @@ function applySliders(){
 
         if( doGrain || (!grain ? noGrain : '') || ifReset ){
             $(this).removeClass('cutbox');
-            if (!$(this).hasClass('cutbox') && !$(this).hasClass('manbox') && !$(this).hasClass('locbox') && !$(this).hasClass('rolbox')) {
+            if (!$(this).hasClass('cutbox') && !$(this).hasClass('manbox') && !$(this).hasClass('locbox') && !$(this).hasClass('rolbox') && !$(this).hasClass('m')) {
                 $(this).fadeIn('slow');
             }
         } else {
@@ -364,7 +364,7 @@ function initSliders(){
 
             $('.product-row').each(function(){
                 $(this).removeClass('cutbox');
-                if (!$(this).hasClass('manbox') && !$(this).hasClass('locbox') && !$(this).hasClass('rolbox')) {
+                if (!$(this).hasClass('manbox') && !$(this).hasClass('locbox') && !$(this).hasClass('rolbox') && !$(this).hasClass('m')) {
                     $(this).fadeIn('slow');
                 }
             });

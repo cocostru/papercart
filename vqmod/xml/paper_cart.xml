@@ -4,15 +4,31 @@
 	<vqmver><![CDATA[2.3]]></vqmver>
 	<author><![CDATA[dk.pochtamp@gmail.com]]></author>
 
+	<file path="/system/library/cart/" name="cart.php">
+		<operation>
+			<search position="after"><![CDATA[$product_data[] = array(]]></search>
+			<add><![CDATA[
+			'description' => $product_query->row['description'],
+	    	]]></add>
+		</operation>
+	</file>
+
     <file path="/catalog/controller/common/" name="cart.php">
-	  <operation>
+	    <operation>
 			<search position="replace"><![CDATA[$data['text_items'] = sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));]]></search>
 			<add><![CDATA[
 			$state = $this->config->get('paper_filter_status');
 
-			$data['text_items'] = $state ? ($this->cart->countProducts() ? '<span class="cart-extra">&nbsp; x&nbsp; ' . $this->cart->countProducts() . '</span>' : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
+			$data['text_items'] = $state ? ($this->cart->countProducts() ? '<span class="cart-extra">&nbsp; x&nbsp; ' . $this->cart->countProducts() . 'kg</span>' : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
 
 			// $data['text_items'] = $state ? ($this->cart->countProducts() ? sprintf('<span class="cart-extra">' . $this->language->get('text_items') . '</span>', $this->cart->countProducts(), $this->currency->format($total, $this->session->data['currency'])) : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
+	    	]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$data['products'][] = array(]]></search>
+			<add><![CDATA[
+			'description' => $product['description'],
+			'stock_unit' => $this->weight->getUnit($product['weight_class_id']),
 	    	]]></add>
 		</operation>
 		<operation>
@@ -29,7 +45,7 @@
 			<add><![CDATA[
 			$state = $this->config->get('paper_filter_status');
 
-			$json['total'] = $state ? ($this->cart->countProducts() ? sprintf('<span class="cart-extra">&nbsp; x&nbsp; ' . $this->cart->countProducts() . '</span>', $this->cart->countProducts(), $this->currency->format($total, $this->session->data['currency'])) : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
+			$json['total'] = $state ? ($this->cart->countProducts() ? sprintf('<span class="cart-extra">&nbsp; x&nbsp; ' . $this->cart->countProducts() . 'kg</span>', $this->cart->countProducts(), $this->currency->format($total, $this->session->data['currency'])) : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
 
 			// $json['total'] = $state ? ($this->cart->countProducts() ? sprintf('<span class="cart-extra">' . $this->language->get('text_items') . '</span>', $this->cart->countProducts(), $this->currency->format($total, $this->session->data['currency'])) : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
 	    	]]></add>
@@ -114,7 +130,7 @@
 
 		        		$json['success'] = sprintf($this->language->get('text_success_multiple'), rtrim($success, ", "), count($products_to_add) > 1 ? 'have' : 'has', $this->url->link('checkout/cart'));
 
-						$json['total'] = $state ? ($this->cart->countProducts() ? '<span class="cart-extra">&nbsp; x&nbsp; ' . $this->cart->countProducts() . '</span>' : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
+						$json['total'] = $state ? ($this->cart->countProducts() ? '<span class="cart-extra">&nbsp; x&nbsp; ' . $this->cart->countProducts() . 'kg</span>' : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
 
 						// $json['total'] = $state ? ($this->cart->countProducts() ? sprintf('<span class="cart-extra">' . $this->language->get('text_items') . '</span>', $this->cart->countProducts(), $this->currency->format($total, $this->session->data['currency'])) : '') : sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total, $this->session->data['currency']));
 					}

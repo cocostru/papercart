@@ -1,52 +1,71 @@
 <div id="cart" class="btn-group btn-block">
-  <button type="button" data-toggle="dropdown" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-success btn-block dropdown-toggle"><i class="fa fa-shopping-cart"></i> <span id="cart-total"><?php echo $text_items; ?></span></button>
+  <button type="button" data-toggle="dropdown" data-loading-text="<?= $text_loading ?>" class="btn btn-success btn-block dropdown-toggle"><i class="fa fa-shopping-cart"></i> <span id="cart-total"><?= $text_items ?></span></button>
   <ul class="dropdown-menu pull-right">
     <?php if ($products || $vouchers) { ?>
     <li>
       <table class="table table-striped">
         <?php foreach ($products as $product) { ?>
         <tr>
-          <td class="text-left"><a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a></td>
-          <td class="col-xs-6">
-            <?php if ($product['option']) { ?>
-                <?php foreach ($product['option'] as $option) { ?>
-                    <div class="col-xs-8"><small><a><?php echo $option['name']; ?></a></small></div>
-                    <div class="col-xs-4"><small><?php echo $option['value']; ?></small></div>
+            <td class="text-left"><a><?= $product['description'] ?></a></td>
+            <td class="col-xs-6">
+                <?php if ($product['option']) { ?>
+                    <?php $unit = '';
+                        foreach ($product['option'] as $option) {
+                            if (strpos(strtolower($option['name']), 'unit')) {
+                                $unit = $option['value'];
+                            }
+                        }
+                    ?>
+                    <?php foreach ($product['option'] as $option) { ?>
+                        <?php if (!strpos(strtolower($option['name']), 'unit')) { ?>
+                            <div class="col-xs-6"><a><?= $option['name'] ?></a></div>
+                            <div class="col-xs-6">
+                                <?= $option['value'] ?>
+                                <?php if (strpos(strtolower($option['name']), 'quant')) echo $unit; ?>
+                            </div>
+                        <?php } ?>
+                    <?php } ?>
                 <?php } ?>
-            <?php } ?>
-          </td>
-          <td class="text-right">x <?php echo $product['quantity']; ?></td>
-          <td class="text-right"><?php echo $product['total']; ?></td>
-          <td class="text-center"><button type="button" onclick="cart.remove('<?php echo $product['cart_id']; ?>');" title="<?php echo $button_remove; ?>" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
+                <div class="col-xs-6"><a>Weight</a></div>
+                <div class="col-xs-6"><?= $product['quantity'] . $product['stock_unit'] ?></div>
+            </td>
+            <td class="text-left"><?= $product['total'] ?></td>
+            <td class="text-center"><button type="button" onclick="cart.remove('<?= $product['cart_id'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs">&#x292C;</button></td>
         </tr>
         <?php } ?>
         <?php foreach ($vouchers as $voucher) { ?>
         <tr>
           <td class="text-center"></td>
-          <td class="text-left"><?php echo $voucher['description']; ?></td>
-          <td class="text-right">x&nbsp;1</td>
-          <td class="text-right"><?php echo $voucher['amount']; ?></td>
-          <td class="text-center text-danger"><button type="button" onclick="voucher.remove('<?php echo $voucher['key']; ?>');" title="<?php echo $button_remove; ?>" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button></td>
+          <td class="text-left"><?= $voucher['description'] ?></td>
+          <td class="text-right"><?= $voucher['amount'] ?> x 1</td>
+          <td class="text-center text-danger"><button type="button" onclick="voucher.remove('<?= $voucher['key'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs">&#x292C;</button></td>
+        </tr>
+        <?php } ?>
+        <?php foreach ($totals as $i => $total) { ?>
+        <tr>
+            <td>
+                <?php if ($total == end($totals)) { ?>
+                    <a href="<?= $cart ?>"><i class="fa fa-shopping-cart"></i> &nbsp; <?= $text_cart ?></a>
+                <?php } ?>
+            </td>
+            <td class="text-left">
+                <div class="col-xs-6">
+                    <?php if ($total == end($totals)) { ?>
+                        <a href="<?= $checkout ?>"><i class="fa fa-share"></i> &nbsp;<?= $text_checkout ?></a>
+                    <?php } ?>
+                </div>
+                <div class="col-xs-6"><?= $total['title'] ?>:</div>
+            </td>
+            <td class="text-left"><?= $total['text'] ?></td>
+            <td></td>
         </tr>
         <?php } ?>
       </table>
-    </li>
-    <li>
-      <div>
-        <table class="table table-bordered">
-          <?php foreach ($totals as $total) { ?>
-          <tr>
-            <td class="text-right"><strong><?php echo $total['title']; ?></strong></td>
-            <td class="text-right"><?php echo $total['text']; ?></td>
-          </tr>
-          <?php } ?>
-        </table>
-        <p class="text-right"><a href="<?php echo $cart; ?>"><strong><i class="fa fa-shopping-cart"></i> <?php echo $text_cart; ?></strong></a>&nbsp;&nbsp;&nbsp;<a href="<?php echo $checkout; ?>"><strong><i class="fa fa-share"></i> <?php echo $text_checkout; ?></strong></a></p>
-      </div>
+      <div></div>
     </li>
     <?php } else { ?>
     <li>
-      <p class="text-center"><?php echo $text_empty; ?></p>
+      <p class="text-center"><?= $text_empty ?></p>
     </li>
     <?php } ?>
   </ul>

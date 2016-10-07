@@ -170,13 +170,16 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
         padding-top: 0;
         width: 200%;
         left: 0;
-        border-bottom: 1px solid #ccc!important;
+        /*border-bottom: 1px solid #ccc!important;*/
     }
     #cart .dropdown-menu li p {
         text-align: center!important;
     }
     #cart table tr:first-of-type td {
         border-top: none!important;
+    }
+    #cart .dropdown-menu table tbody td {
+        vertical-align: middle;
     }
     .slider-wrap {
         background-color: #eee;
