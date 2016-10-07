@@ -286,8 +286,12 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
     .table-wrap {
         padding: 0;
     }
+    .table-wrap thead .fa {
+        display: none;
+    }
     .table-wrap tr > td:first-of-type {
-        padding-left: 7.5px!important;
+        /*padding-left: 2px!important;*/
+        display: none;
     }
     .table-wrap tr td:nth-last-of-type(5), .table-wrap tr td:nth-last-of-type(6) {
         display: none;
@@ -303,6 +307,15 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
     }
     .table-responsive {
         border: none;
+    }
+    input {
+        font-size: 16px!important;
+    }
+    .table-wrap .table > tbody > tr > td input::-webkit-input-placeholder {
+        color: transparent;
+    }
+    .table-wrap .table > tbody > tr > td input::-moz-placeholder {
+        color: transparent;
     }
     /*.table-wrap tr > td:last-of-type {
         padding-right: 7.5px!important;

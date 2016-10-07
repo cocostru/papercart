@@ -33,14 +33,14 @@
                                         <small>Price</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Price of 1 (kg) stock unit"></i>
                                     </td>
                                     <td width="10%" class="head-qinput">
-                                        <small>Req. weight</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Required weight in stock units"></i>
+                                        <small>Weight</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Required weight in stock units"></i>
                                     </td>
                                     <td width="3%" class="head-unit text-center"><small>Unit</small></td>
                                     <!-- <td width="3%" class="head-munit"><a>&#8644;</a></td> -->
                                     <td width="10%" class="head-ainput text-center">
-                                        <small>Alt. qty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Quantity in package (alt.) units"></i>
+                                        <small>Qnty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Quantity in package (alt.) units"></i>
                                     </td>
-                                    <td width="5.5%" class="head-aunit"><small>Alt. unit</small></td>
+                                    <td width="5.5%" class="head-aunit"><small>Pack.</small></td>
                                 </tr>
                             </thead>
                             <tbody>
