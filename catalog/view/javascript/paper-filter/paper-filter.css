@@ -94,7 +94,7 @@
 .table-striped tr:nth-of-type(odd) {
     background-color: rgba(0,0,0,.05)!important;
 }
-#cart .dropdown-menu table tfoot tr:last-of-type td {
+#cart .dropdown-menu table tr.row-last td {
     padding-top: 12px;
     padding-bottom: 12px;
     font-weight: bold;

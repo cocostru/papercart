@@ -640,15 +640,17 @@ function commonActs(){
 
     var mql = window.matchMedia('only screen and (min-width : 0) and (max-width : 767px) and (orientation : landscape), only screen and (min-width : 0) and (max-width : 767px) and (orientation : portrait)');
 
-    if (mql.matches) mets.mobCommons();
-    else mets.moreNav();
+    if (mql.matches) {
+        mets.fixCart();
+        mets.mobCommons();
+    } else mets.moreNav();
 
     mets.penHover();
     mets.fixSearch();
+    mets.checkDesc();
     mets.expandShow();
     mets.locationVoid();
     mets.optionChange();
-    mets.checkDesc();
 
     slide ? $('.filter').removeClass('x') : $('.filter').addClass('x');
 

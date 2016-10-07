@@ -8,7 +8,6 @@
         <?php if ($products || $vouchers) { ?>
             <li>
                 <table class="table table-striped">
-                    <tbody>
                         <?php foreach ($products as $product) { ?>
                             <tr>
                                 <td class="text-left"><a><?= $product['description'] ?></a></td>
@@ -38,9 +37,7 @@
                                 </td>
                             </tr>
                         <?php } ?>
-                    </tbody>
 
-                    <tfoot>
                         <?php foreach ($vouchers as $voucher) { ?>
                             <tr>
                                 <td class="text-center"></td>
@@ -53,7 +50,7 @@
                         <?php } ?>
 
                         <?php foreach ($totals as $i => $total) { ?>
-                            <tr>
+                            <tr <?php if ($total == end($totals)) echo 'class="row-last"'; ?>>
                                 <td>
                                     <?php if ($total == end($totals)) { ?>
                                         <a href="<?= $cart ?>"><i class="fa fa-shopping-cart"></i> &nbsp; <?= $text_cart ?></a>
@@ -71,8 +68,6 @@
                                 <td></td>
                             </tr>
                         <?php } ?>
-
-                    </tfoot>
 
                 </table>
 
