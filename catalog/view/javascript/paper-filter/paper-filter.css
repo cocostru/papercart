@@ -118,7 +118,7 @@
     color: #fff;
 }
 #cart .dropdown-menu table td > div {
-    padding: 0;
+    padding: 0 5px 0 0;
 }
 #cart .dropdown-menu table td .fa {
     font-size: 12px;
