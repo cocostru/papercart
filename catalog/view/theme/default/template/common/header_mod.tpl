@@ -76,7 +76,7 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse" style="padding:0">
       <ul class="nav navbar-nav" style="width:100%;height:40px">
         <li class="menu-extra">
-          <a href="index.php?route=account/login" class="see-all" style="border-radius:0"><i class="fa fa-sign-in"></i> <?= $logged ? 'Sign out' : 'Log in / Sign up' ?></a>
+          <a href="index.php?route=account/<?= $logged ? 'logout' : 'login' ?>" class="see-all" style="border-radius:0"><i class="fa fa-sign-in"></i> <?= $logged ? 'Sign out' : 'Log in / Sign up' ?></a>
         </li>
         <li class="menu-extra">
           <a href="index.php?route=checkout/cart" class="see-all" style="margin-top:0"><i class="fa fa-shopping-cart"></i> Cart</a>
@@ -111,7 +111,7 @@
             <div class="dropdown-inner">
               <ul class="list-unstyled"></ul>
             </div>
-            <a href="index.php?route=account/login" class="see-all" style="border-radius:0">
+            <a href="index.php?route=account/<?= $logged ? 'logout' : 'login' ?>" class="see-all" style="border-radius:0">
                 <?= $logged ? 'Sign out' : 'Log in / Sign up' ?>
             </a>
             <a href="index.php?route=checkout/cart" class="see-all">Cart / Checkout</a>
