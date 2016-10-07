@@ -74,6 +74,9 @@
     text-shadow: none;
     border: none;
 }
+#cart .btn-danger .fa {
+    display: none;
+}
 #cart .dropdown-menu {
     overflow: hidden;
     background-color: #5bb77a;

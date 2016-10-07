@@ -33,7 +33,7 @@
                                 </td>
                                 <td class="text-left"><?= $product['total'] ?></td>
                                 <td class="text-center">
-                                    <button type="button" onclick="cart.remove('<?= $product['cart_id'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs">&#10539;</button>
+                                    <button type="button" onclick="cart.remove('<?= $product['cart_id'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs"><span>&#10539;</span><i class="fa fa-remove"></i></button>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -44,7 +44,7 @@
                                 <td class="text-left"><?= $voucher['description'] ?></td>
                                 <td class="text-right"><?= $voucher['amount'] ?> x 1</td>
                                 <td class="text-center text-danger">
-                                    <button type="button" onclick="voucher.remove('<?= $voucher['key'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs">&#10539;</button>
+                                    <button type="button" onclick="voucher.remove('<?= $voucher['key'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs"><span>&#10539;</span><i class="fa fa-remove"></i></button>
                                 </td>
                             </tr>
                         <?php } ?>
