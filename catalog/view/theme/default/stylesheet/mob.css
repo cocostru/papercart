@@ -118,6 +118,7 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
     }
     [id|="column"] {
         text-align: center;
+        overflow: hidden;
         display: flex;
     }
     .cart {
