@@ -10,6 +10,7 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
     #content {
         width: 100%;
         padding: 0;
+        min-height: 0;
     }
     .search-wrap {
         padding: 0 5px 20px!important;
