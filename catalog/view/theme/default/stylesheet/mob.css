@@ -308,9 +308,9 @@ only screen and (min-width: 0) and (max-width: 767px) and (orientation: portrait
     .table-responsive {
         border: none;
     }
-    input {
+    /*input {
         font-size: 16px!important;
-    }
+    }*/
     .table-wrap .table > tbody > tr > td input::-webkit-input-placeholder {
         color: transparent;
     }
