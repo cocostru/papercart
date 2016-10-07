@@ -143,18 +143,18 @@
     		}
             ]]></add>
 		</operation>
-        <operation>
+        <!-- <operation>
 			<search position="after"><![CDATA[private function validateForm() {]]></search>
 			<add><![CDATA[
             if (isset($this->request->post['warehouse'])) {
     			foreach ($this->request->post['warehouse'] as $warehouse_id => $warehouse) {
-					//if ((utf8_strlen($warehouse['warehouse_city']) < 3) || (utf8_strlen($warehouse['warehouse_zone']) == '')) {
-					//	$this->error['warehouse'][$warehouse_id] = 'Error!';
-					//}
+					if ((utf8_strlen($warehouse['warehouse_city']) < 3) || (utf8_strlen($warehouse['warehouse_zone']) == '')) {
+						$this->error['warehouse'][$warehouse_id] = 'Error!';
+					}
     			}
     		}
             ]]></add>
-		</operation>
+		</operation> -->
         <operation>
 			<search position="replace"><![CDATA[$output .= '<option value="' . $result['zone_id'] . '"';]]></search>
 			<add><![CDATA[

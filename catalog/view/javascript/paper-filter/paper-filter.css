@@ -100,7 +100,7 @@
 #cart .dropdown-menu table tr.row-last td {
     padding-top: 12px;
     padding-bottom: 12px;
-    font-weight: bold;
+    /*font-weight: bold;*/
     /*font-style: italic;*/
     font-size: 11px;
 }
@@ -116,9 +116,10 @@
 }
 #cart .dropdown-menu table td a {
     color: #fff;
+    border-bottom: 1px dashed;
 }
 #cart .dropdown-menu table td > div {
-    padding: 0 5px 0 0;
+    padding: 0 10px 0 0;
 }
 #cart .dropdown-menu table td .fa {
     font-size: 12px;

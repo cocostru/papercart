@@ -1,5 +1,5 @@
 <?php echo $header; ?>
-<style> [id|="column"] { width: 16.5%; padding: 9px 20px } .search-wrap { width: 72.5%; padding: 7px 15px 20px } .filter.x { margin-bottom: 9px } </style>
+<style> [id|="column"] { width: 16.5%; padding: 9px 20px } .search-wrap { width: 72.5%; padding: 5px 15px 20px } .filter.x { margin-bottom: 9px } </style>
 
 <div class="container">
     <ul class="breadcrumb">
@@ -42,15 +42,15 @@
                                     <td width="10%" class="head-price">
                                         <small>Price</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Price of 1 (kg) stock unit"></i>
                                     </td>
-                                    <td width="10%" class="head-qinput">
-                                        <small>Req. qty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Required quantity in stock units"></i>
+                                    <td width="10%" class="head-qinput text-center">
+                                        <small>Weight</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Required quantity in weight units"></i>
                                     </td>
                                     <td width="3%" class="head-unit text-center"><small>Unit</small></td>
                                     <!-- <td width="3%" class="head-munit"><a>&#8644;</a></td> -->
                                     <td width="10%" class="head-ainput text-center">
-                                        <small>Alt. qty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Quantity of package (alt.) units"></i>
+                                        <small>Qnty.</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Quantity in package (alt.) units"></i>
                                     </td>
-                                    <td width="5.5%" class="head-aunit"><small>Alt. unit</small></td>
+                                    <td width="5.5%" class="head-aunit"><small>Pack.</small></td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -132,12 +132,12 @@
                                         <?php endif; ?>
                                     </td> -->
                                     <td class="ainput">
-                                        <?php if($product['alt_qty']): ?>
+                                        <?php if ($product['alt_qty'] && $product['alt_unit']) : ?>
                                             <input type="text" name="option[<?= $product['alt_qty']['product_option_id'] ?>]" class="form-control input-sm" placeholder="<?= $product['model'] ?>" />
                                         <?php endif; ?>
                                     </td>
                                     <td class="aunit">
-                                        <?php if($product['alt_unit']): ?>
+                                        <?php if ($product['alt_qty'] && $product['alt_unit']) : ?>
                                             <select name="option[<?= $product['alt_unit']['product_option_id'] ?>]" id="input-option[<?= $product['alt_unit']['product_option_id'] ?>]">
                                                 <?php foreach($product['alt_unit']['product_option_value'] as $option_value): ?>
                                                         <option title="<?= 'Weight: ' . number_format($option_value['weight'], 2) . 'kg' ?>" value="<?php echo $option_value['product_option_value_id']; ?>"  data-weight="<?= number_format($option_value['weight'], 2) ?>" <?= ($product['length'] < 1 && $product['width'] > 0) || ($product['width'] < 1 && $product['length'] > 0) ? ($option_value['name'] == 'roll' ? 'selected' : '') : ($product['gsm'] > 180 ? ($option_value['name'] == 'pkt' ? 'selected' : '') : ($option_value['name'] == 'ream' ? 'selected' : '')) ?> >

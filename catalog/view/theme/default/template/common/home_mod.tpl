@@ -32,8 +32,8 @@
                                     <td width="10%" class="head-price">
                                         <small>Price</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Price of 1 (kg) stock unit"></i>
                                     </td>
-                                    <td width="10%" class="head-qinput">
-                                        <small>Weight</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Required weight in stock units"></i>
+                                    <td width="10%" class="head-qinput text-center">
+                                        <small>Weight</small> <i class="fa fa-exclamation-circle" data-toggle="tooltip" data-original-title="Required quantity in weight units"></i>
                                     </td>
                                     <td width="3%" class="head-unit text-center"><small>Unit</small></td>
                                     <!-- <td width="3%" class="head-munit"><a>&#8644;</a></td> -->

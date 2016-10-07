@@ -10,7 +10,7 @@
                 <table class="table table-striped">
                         <?php foreach ($products as $product) { ?>
                             <tr>
-                                <td class="text-left"><a><?= $product['description'] ?></a></td>
+                                <td class="text-left col-xs-5"><?= $product['description'] ?><br/><?= $product['model'] ?></td>
                                 <td class="col-xs-6">
                                     <?php if ($product['option']) { ?>
                                         <?php $unit = ''; ?>
@@ -20,20 +20,20 @@
 
                                         <?php foreach ($product['option'] as $option) { ?>
                                             <?php if (!strpos(strtolower($option['name']), 'unit')) { ?>
-                                                <div class="col-xs-6"><a><?= $option['name'] ?></a></div>
-                                                <div class="col-xs-6">
+                                                <div class="col-xs-5 text-right"><?= $option['name'] ?>:</div>
+                                                <div class="col-xs-7">
                                                     <?= $option['value'] ?>
-                                                    <?php if (strpos(strtolower($option['name']), 'quant')) echo $unit; ?>
+                                                    <?php if (strpos(strtolower($option['name']), 'quant') !== false) echo $unit; ?>
                                                 </div>
                                             <?php } ?>
                                         <?php } ?>
                                     <?php } ?>
-                                    <div class="col-xs-6"><a>Weight</a></div>
-                                    <div class="col-xs-6"><?= $product['quantity'] . $product['stock_unit'] ?></div>
+                                    <div class="col-xs-5 text-right">Weight:</div>
+                                    <div class="col-xs-7"><?= $product['quantity'] . $product['stock_unit'] ?></div>
                                 </td>
                                 <td class="text-left"><?= $product['total'] ?></td>
                                 <td class="text-center">
-                                    <button type="button" onclick="cart.remove('<?= $product['cart_id'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs"><span>&#10539;</span><i class="fa fa-remove"></i></button>
+                                    <button type="button" onclick="cart.remove('<?= $product['cart_id'] ?>');" class="btn btn-danger btn-xs"><span>&#10539;</span><i class="fa fa-remove"></i></button>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -44,25 +44,23 @@
                                 <td class="text-left"><?= $voucher['description'] ?></td>
                                 <td class="text-right"><?= $voucher['amount'] ?> x 1</td>
                                 <td class="text-center text-danger">
-                                    <button type="button" onclick="voucher.remove('<?= $voucher['key'] ?>');" title="<?= $button_remove ?>" data-toggle="tooltip" data-placement="left" class="btn btn-danger btn-xs"><span>&#10539;</span><i class="fa fa-remove"></i></button>
+                                    <button type="button" onclick="voucher.remove('<?= $voucher['key'] ?>');" class="btn btn-danger btn-xs"><span>&#10539;</span><i class="fa fa-remove"></i></button>
                                 </td>
                             </tr>
                         <?php } ?>
 
                         <?php foreach ($totals as $i => $total) { ?>
                             <tr <?php if ($total == end($totals)) echo 'class="row-last"'; ?>>
-                                <td>
+                                <td colspan="2">
                                     <?php if ($total == end($totals)) { ?>
-                                        <a href="<?= $cart ?>"><i class="fa fa-shopping-cart"></i> &nbsp; <?= $text_cart ?></a>
+                                        <div class="col-xs-4 text-left">
+                                            <i class="fa fa-shopping-cart"></i> &nbsp; <a href="<?= $cart ?>"><?= $text_cart ?></a>
+                                        </div>
+                                        <div class="col-xs-4 text-center">
+                                            <i class="fa fa-share"></i> &nbsp;<a href="<?= $checkout ?>"><?= $text_checkout ?></a>
+                                        </div>
                                     <?php } ?>
-                                </td>
-                                <td class="text-left">
-                                    <div class="col-xs-6">
-                                        <?php if ($total == end($totals)) { ?>
-                                            <a href="<?= $checkout ?>"><i class="fa fa-share"></i> &nbsp;<?= $text_checkout ?></a>
-                                        <?php } ?>
-                                    </div>
-                                    <div class="col-xs-6"><?= $total['title'] ?>:</div>
+                                    <div class="col-xs-4 pull-right text-right"><?= $total['title'] ?>:</div>
                                 </td>
                                 <td class="text-left"><?= $total['text'] ?></td>
                                 <td></td>
